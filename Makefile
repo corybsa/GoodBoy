@@ -7,8 +7,8 @@ APP_DIR  := $(BUILD)/apps
 TARGET   := goodboy
 INCLUDE  := -Iinclude/
 SRC      :=                  \
-   $(wildcard system/*.cpp)  \
-   $(wildcard *.cpp)         \
+   $(wildcard src/system/*.cpp)  \
+   $(wildcard src/*.cpp)         \
 
 OBJECTS  := $(SRC:%.cpp=$(OBJ_DIR)/%.o)
 
