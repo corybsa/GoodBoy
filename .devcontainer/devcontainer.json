@@ -4,6 +4,7 @@
     "settings": {
         "terminal.integrated.shell.linux": "/bin/bash"
     },
+    "remoteUser": "goodboyuser",
     "extensions": [
         "ms-vscode.cpptools"
     ]
