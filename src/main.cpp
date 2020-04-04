@@ -25,7 +25,6 @@ int main(int argc, char* args[]) {
     SDL_DestroyWindow(window);
     SDL_Quit();
 
-
     GameBoy* gb = new GameBoy();
 
     // printf("A: %04X\n", gb->cpu->registers.A);
