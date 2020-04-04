@@ -13,7 +13,7 @@ RUN apt-get update \
         ca-certificates iproute2 procps lsb-release git \
         #
         # C++ tools
-        build-essential cmake cppcheck valgrind \
+        build-essential cmake cppcheck valgrind clang \
         #
         # development libraries
         libsdl2-dev \
