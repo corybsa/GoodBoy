@@ -1,5 +1,5 @@
-#include "types.h"
-#include "registers.h"
+#include "includes/types.h"
+#include "includes/registers.h"
 
 byte Registers::get8Bit(int reg) {
     switch(reg) {

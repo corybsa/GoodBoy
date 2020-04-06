@@ -1,8 +1,8 @@
 #include <chrono>
 #include <thread>
-#include "cpu.h"
-#include "memory.h"
-#include "globals.h"
+#include "includes/cpu.h"
+#include "includes/memory.h"
+#include "includes/globals.h"
 
 CPU::CPU(Memory* memory, GPU* gpu, Timers* timers) {
     this->memory = memory;

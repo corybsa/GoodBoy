@@ -1,5 +1,5 @@
-#include "timers.h"
-#include "globals.h"
+#include "includes/timers.h"
+#include "includes/globals.h"
 
 Timers::Timers(Memory* memory) {
     this->memory = memory;

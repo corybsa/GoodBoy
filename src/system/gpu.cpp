@@ -1,5 +1,5 @@
-#include "gpu.h"
-#include "globals.h"
+#include "includes/gpu.h"
+#include "includes/globals.h"
 #include <iostream>
 
 GPU::GPU(Memory* memory, LCD* lcd) {

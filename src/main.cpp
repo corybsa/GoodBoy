@@ -1,10 +1,10 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 
-#include "system/gameboy.h"
+#include "system/includes/gameboy.h"
 
 int main(int argc, char* args[]) {
-    SDL_Window* window = NULL;
+    /* SDL_Window* window = NULL;
     SDL_Surface* screenSurface = NULL;
 
     if(SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -23,28 +23,28 @@ int main(int argc, char* args[]) {
     }
 
     SDL_DestroyWindow(window);
-    SDL_Quit();
+    SDL_Quit(); */
 
     GameBoy* gb = new GameBoy();
 
-    // printf("A: %04X\n", gb->cpu->registers.A);
-    // printf("F: %04X\n", gb->cpu->registers.F);
-    // printf("AF: %04X\n", gb->cpu->registers.AF);
+    /* printf("A: %04X\n", gb->cpu->registers.A);
+    printf("F: %04X\n", gb->cpu->registers.F);
+    printf("AF: %04X\n", gb->cpu->registers.AF);
 
-    // printf("B: %04X\n", gb->cpu->registers.B);
-    // printf("C: %04X\n", gb->cpu->registers.C);
-    // printf("BC: %04X\n", gb->cpu->registers.BC);
+    printf("B: %04X\n", gb->cpu->registers.B);
+    printf("C: %04X\n", gb->cpu->registers.C);
+    printf("BC: %04X\n", gb->cpu->registers.BC);
 
-    // printf("D: %04X\n", gb->cpu->registers.D);
-    // printf("E: %04X\n", gb->cpu->registers.E);
-    // printf("DE: %04X\n", gb->cpu->registers.DE);
+    printf("D: %04X\n", gb->cpu->registers.D);
+    printf("E: %04X\n", gb->cpu->registers.E);
+    printf("DE: %04X\n", gb->cpu->registers.DE);
 
-    // printf("H: %04X\n", gb->cpu->registers.H);
-    // printf("L: %04X\n", gb->cpu->registers.L);
-    // printf("HL: %04X\n", gb->cpu->registers.HL);
+    printf("H: %04X\n", gb->cpu->registers.H);
+    printf("L: %04X\n", gb->cpu->registers.L);
+    printf("HL: %04X\n", gb->cpu->registers.HL);
 
-    // printf("SP: %04X\n", gb->cpu->registers.SP);
-    // printf("PC: %04X\n", gb->cpu->registers.PC);
+    printf("SP: %04X\n", gb->cpu->registers.SP);
+    printf("PC: %04X\n", gb->cpu->registers.PC); */
     
     delete gb;
 

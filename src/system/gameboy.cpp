@@ -1,5 +1,5 @@
-#include "gameboy.h"
-#include "types.h"
+#include "includes/gameboy.h"
+#include "includes/types.h"
 
 GameBoy::GameBoy() {
     memory = new Memory();

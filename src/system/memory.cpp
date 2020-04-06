@@ -1,5 +1,5 @@
-#include "memory.h"
-#include "globals.h"
+#include "includes/memory.h"
+#include "includes/globals.h"
 
 #include <iostream>
 
