@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "memory.h"
+#include "globals.h"
 
 class LCD {
 private:
@@ -10,6 +11,8 @@ private:
 
 public:
     LCD(Memory* memory);
+
+    void render(byte backgroundMap[BG_HEIGHT][BG_WIDTH][8]);
 };
 
 #endif

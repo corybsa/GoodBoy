@@ -277,20 +277,20 @@ void CPU::checkInterrupts() {
 
         if(enabledInterrupts == 0) {
             registers.PC = 0x00;
-        } else if((enabledInterrupts & I_VBLANK) == I_VBLANK) {
-            interrupt &= ~I_VBLANK;
+        } else if((enabledInterrupts & INTERRUPT_VBLANK) == INTERRUPT_VBLANK) {
+            interrupt &= ~INTERRUPT_VBLANK;
             registers.PC = 0x40;
-        } else if((enabledInterrupts & I_LCD_STAT) == I_LCD_STAT) {
-            interrupt &= ~I_LCD_STAT;
+        } else if((enabledInterrupts & INTERRUPT_LCD_STAT) == INTERRUPT_LCD_STAT) {
+            interrupt &= ~INTERRUPT_LCD_STAT;
             registers.PC = 0x48;
-        } else if((enabledInterrupts & I_TIMER) == I_TIMER) {
-            interrupt &= ~I_TIMER;
+        } else if((enabledInterrupts & INTERRUPT_TIMER) == INTERRUPT_TIMER) {
+            interrupt &= ~INTERRUPT_TIMER;
             registers.PC = 0x50;
-        } else if((enabledInterrupts & I_SERIAL) == I_SERIAL) {
-            interrupt &= ~I_SERIAL;
+        } else if((enabledInterrupts & INTERRUPT_SERIAL) == INTERRUPT_SERIAL) {
+            interrupt &= ~INTERRUPT_SERIAL;
             registers.PC = 0x58;
-        } else if((enabledInterrupts & I_JOYPAD) == I_JOYPAD) {
-            interrupt &= ~I_JOYPAD;
+        } else if((enabledInterrupts & INTERRUPT_JOYPAD) == INTERRUPT_JOYPAD) {
+            interrupt &= ~INTERRUPT_JOYPAD;
             registers.PC = 0x60;
         } else {
             timers->tick(4);

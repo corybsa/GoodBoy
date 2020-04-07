@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include <functional>
+#include <array>
 
 /**
  * The GameBoy has 64KB of Memory.
@@ -54,26 +55,45 @@
  */
 class Memory {
 private:
-    int cartridge[0x800000];
-    int vram[0x2000];
-    int sram[0x8000];
-    int wram[0x2000];
-    int eram[0x1E00];
-    int oam[0xA0];
-    int fea0_feff[0x60];
-    int io[0x80];
-    int hram[0x7F];
-    int ie[0x01];
+    byte* cartridge = new byte[0x800000];
+    byte* vram = new byte[0x2000];
+    byte* sram = new byte[0x8000];
+    byte* wram = new byte[0x2000];
+    byte* eram = new byte[0x1E00];
+    byte* oam = new byte[0xA0];
+    byte* fea0_feff = new byte[0x60];
+    byte* io = new byte[0x80];
+    byte* hram = new byte[0x7F];
+    byte* ie = new byte[0x01];
 
-    std::function<void(word)> gpuCallback;
+    std::function<void(word, byte, byte)> gpuCallback;
 
 public:
-    Memory();
+    int romBankType;
+    int currentRomBank = 1;
+    int currentRamBank = 0;
+    bool isRomEnabled = true;
+    bool isRamEnabled = false;
+
+    Memory() = default;
+
+    void setGpuCallback(std::function<void(word, byte, byte)> arg2);
 
     byte getByteAt(word address);
     void setByteAt(word address, byte value);
-
-    void setGpuCallback(std::function<void(word)> arg2);
+    void loadRom(byte* rom);
+    byte* getRom();
+    void updateDiv(byte value);
+    int getTimerSystemBit();
+    void incrementTima();
+    void compareLY();
+    int getRomBankType(byte value);
+    void writeBank(word address, byte value);
+    void enableRamBanking(word address, byte value);
+    void changeLowRomBank(byte value);
+    void changeHighRomBank(byte value);
+    void changeRamBank(byte value);
+    void changeBankMode(byte value);
 };
 
 #endif
