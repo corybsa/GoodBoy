@@ -7,6 +7,7 @@ APP_DIR  := $(BUILD)/apps
 TARGET   := goodboy
 INCLUDE  := -Iinclude/
 SRC      :=                  \
+   $(wildcard src/system/util/*.cpp)  \
    $(wildcard src/system/*.cpp)  \
    $(wildcard src/*.cpp)         \
 

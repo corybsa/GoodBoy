@@ -2,31 +2,73 @@
 #include <iostream>
 #include <fstream>
 
+#include "system/util/includes/window.h"
 #include "system/includes/gameboy.h"
 
 byte* openFile(char* name);
 
 int main(int argc, char* args[]) {
-    /* SDL_Window* window = NULL;
-    SDL_Surface* screenSurface = NULL;
+    Window mainWindow;
+    Window debugWindow;
+    bool success = true;
 
     if(SDL_Init(SDL_INIT_VIDEO) < 0) {
-        printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+        printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
+        success = false;
     } else {
-        window = SDL_CreateWindow("GoodBoy", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, LCD_WIDTH, LCD_HEIGHT, SDL_WINDOW_SHOWN);
+        if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
+            printf("Warning: Linear texture filtering not enabled!");
+        }
 
-        if(window == NULL) {
-            printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-        } else {
-            screenSurface = SDL_GetWindowSurface(window);
-            SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0xFF, 0xFF, 0xFF));
-            SDL_UpdateWindowSurface(window);
-            SDL_Delay(2000);
+        if(!mainWindow.init("GoodBoy", LCD_WIDTH * 2, LCD_HEIGHT * 2)) {
+            printf("Main window could not be created!\n");
+            success = false;
         }
     }
 
-    SDL_DestroyWindow(window);
-    SDL_Quit(); */
+    if(!success) {
+        printf("Failed to initialize!");
+    } else {
+        debugWindow.init("Debugger", 600, 480);
+
+        bool quit = false;
+
+        SDL_Event e;
+
+        while(!quit) {
+
+            // handle events on queue
+            while(SDL_PollEvent(&e) != 0) {
+
+                // user requests quit
+                if(e.type == SDL_QUIT) {
+                    quit = true;
+                    break;
+                }
+
+                mainWindow.handleEvent(e);
+                debugWindow.handleEvent(e);
+
+                if(e.type == SDL_KEYDOWN) {
+                    switch(e.key.keysym.sym) {
+                        case SDLK_q:
+                            quit = true;
+                    }
+                }
+            }
+
+            // update windows
+            mainWindow.render();
+            debugWindow.render();
+
+            // check windows
+            bool allWindowsClosed = !mainWindow.isShown && !debugWindow.isShown;
+            
+            if(allWindowsClosed) {
+                quit = true;
+            }
+        }
+    }
 
     // byte* rom = openFile("./resources/roms/tests/mooneye/acceptance/instr/daa.gb");
     byte* rom = openFile("./resources/roms/tests/blargg/cpu_instrs/cpu_instrs.gb");
@@ -59,6 +101,9 @@ int main(int argc, char* args[]) {
     printf("PC: %04X\n", gb->cpu->registers.PC); */
     
     delete gb;
+    mainWindow.free();
+    debugWindow.free();
+    SDL_Quit();
 
     return 0;
 }
