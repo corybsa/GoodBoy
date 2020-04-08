@@ -1,6 +1,5 @@
 #include "includes/gpu.h"
 #include "includes/globals.h"
-#include <iostream>
 
 GPU::GPU(Memory* memory, LCD* lcd) {
     this->memory = memory;
@@ -13,17 +12,17 @@ void GPU::reset() {
     scanline = 0;
     ticks = 0;
     previousCycles = 0;
-    // setLY(0);
+    memory->writeIO(IO_LY_COORDINATE, 0);
 }
 
 void GPU::tick(unsigned long cycles) {
-    /* ticks += cycles - previousCycles;
+    ticks += cycles - previousCycles;
     previousCycles = cycles;
 
     switch(mode) {
         case GPU_MODE_HBLANK:
             if(ticks >= GPU_TIMING_HBLANK) {
-                lcd->render(backgroundMap);
+                // lcd->render(backgroundMap);
                 scanline++;
 
                 if(scanline == VBLANK_START) {
@@ -33,7 +32,7 @@ void GPU::tick(unsigned long cycles) {
                 }
 
                 ticks -= GPU_TIMING_HBLANK;
-                setLY(scanline);
+                memory->writeIO(IO_LY_COORDINATE, scanline);
             }
 
             break;
@@ -47,7 +46,7 @@ void GPU::tick(unsigned long cycles) {
                 }
 
                 ticks -= GPU_TIMING_VBLANK;
-                setLY(scanline);
+                memory->writeIO(IO_LY_COORDINATE, scanline);
             }
 
             break;
@@ -65,11 +64,11 @@ void GPU::tick(unsigned long cycles) {
             }
 
             break;
-    } */
+    }
 }
 
 void GPU::updateTiles(word address, byte byte1, byte byte2) {
-    /* if(address >= 0x1800) {
+    if(address >= 0x1800) {
         // updateBackgroundMap();
     }
 
@@ -95,5 +94,69 @@ void GPU::updateTiles(word address, byte byte1, byte byte2) {
         // }
 
         tiles[tileIndex][rowIndex][pixelIndex] = pixelValue;
-    } */
+    }
+}
+
+void GPU::changeMode(int newMode) {
+    if(newMode != mode) {
+        int status = memory->readIO(IO_LCD_STATUS);
+
+        // set the mode bits in LCD_STATUS
+        status = (status & ~(newMode)) | newMode;
+
+        // set the mode interrupts bit (bits 3 through 5)
+        status |= (1 << (newMode + 3));
+
+        /*
+
+        This signal is set to 1 if:
+        ( (LY = LYC) AND (STAT.ENABLE_LYC_COMPARE = 1) ) OR
+        ( (ScreenMode = 0) AND (STAT.ENABLE_HBL = 1) ) OR
+        ( (ScreenMode = 2) AND (STAT.ENABLE_OAM = 1) ) OR
+        ( (ScreenMode = 1) AND (STAT.ENABLE_VBL || STAT.ENABLE_OAM) )
+
+        Bit 6 - LYC=LY Coincidence Interrupt (1=Enable) (Read/Write)
+        Bit 5 - Mode 2 OAM Interrupt         (1=Enable) (Read/Write)
+        Bit 4 - Mode 1 V-Blank Interrupt     (1=Enable) (Read/Write)
+        Bit 3 - Mode 0 H-Blank Interrupt     (1=Enable) (Read/Write)
+        Bit 2 - Coincidence Flag  (0:LYC<>LY, 1:LYC=LY) (Read Only)
+        Bit 1-0 - Mode Flag       (Mode 0-3, see below) (Read Only)
+            0: During H-Blank
+            1: During V-Blank
+            2: During Searching OAM
+            3: During Transferring Data to LCD Driver
+
+        */
+        switch(newMode) {
+            case GPU_MODE_HBLANK:
+                if((status & 0x08) == 0x08) {
+                    requestInterrupt(INTERRUPT_LCD_STAT);
+                }
+
+                break;
+            case GPU_MODE_VBLANK:
+                if((status & 0x10) == 0x10 || (status & 0x20) == 0x20) {
+                    requestInterrupt(INTERRUPT_LCD_STAT);
+                }
+
+                break;
+            case GPU_MODE_OAM:
+                if((status & 0x20) == 0x20) {
+                    requestInterrupt(INTERRUPT_LCD_STAT);
+                }
+
+                break;
+            case GPU_MODE_VRAM:
+
+                break;
+        }
+
+        memory->writeIO(IO_LCD_STATUS, status);
+        mode = newMode;
+    }
+}
+
+void GPU::requestInterrupt(int interrupt) {
+    byte flags = memory->readIO(IO_INTERRUPT_FLAGS) | interrupt;
+    memory->writeIO(IO_INTERRUPT_FLAGS, flags);
 }

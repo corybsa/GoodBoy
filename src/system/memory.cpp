@@ -1,13 +1,12 @@
 #include "includes/memory.h"
 #include "includes/globals.h"
-
 #include <iostream>
 
 void Memory::setGpuCallback(std::function<void(word, byte, byte)> callback) {
     gpuCallback = callback;
 }
 
-byte Memory::getByteAt(word address) {
+byte Memory::readByte(word address) {
     word addr;
 
     if(address <= 0x3FFF) {
@@ -34,61 +33,7 @@ byte Memory::getByteAt(word address) {
         // reading from this area on DMG always returns 0
         return 0x00;
     } else if(address <= 0xFF7F) {
-        addr = 0x7F - (0xFF7F - address);
-        byte value = io[addr];
-
-        if(address == IO_JOYPAD) {
-            // the upper 2 bits always returns 1
-            return 0xC0 | value;
-        } else if(address == IO_SERIAL_TRANSFER_CONTROL) {
-            // bits 1 through 6 return 1
-            return 0x7E | value;
-        } else if(address == IO_TAC) {
-            // the upper 5 bits always return 1
-            return 0xF8 | value;
-        } else if(address == IO_INTERRUPT_FLAGS) {
-            // the upper 3 bits always return 1
-            return 0xE0 | value;
-        } else if(address == IO_SOUND1_SWEEP) {
-            // the 7th bit always returns 1
-            return 0x80 | value;
-        } else if(address == IO_SOUND3_ENABLE) {
-            // bits 0 through 6  always return 1
-            return 0x7F | value;
-        } else if(address == IO_SOUND3_OUTPUT_LEVEL) {
-            // bits 0 through 4 and bit 7 always return 1
-            return 0x9F | value;
-        } else if(address == IO_SOUND4_LENGTH) {
-            // bits 6 and 7 always return 1
-            return 0xC0 | value;
-        } else if(address == IO_SOUND4_INITIAL) {
-            // bits 0 through 5 always return 1
-            return 0x3F | value;
-        } else if(address == IO_SOUND_ENABLE) {
-            // bits 4 through 6 always return 1
-            return 0x70 | value;
-        } else if(address == IO_LCD_STATUS) {
-            byte lcdc = getByteAt(IO_LCDC);
-
-            // when LCD is off, bits 0 through 2 return 0
-            if((lcdc & 0x80) != 0x80) {
-                return (0x80 | value) & 0xF8;
-            } else {
-                return (0x80 | value);
-            }
-        } else if(address == IO_LY_COORDINATE) {
-            bool isLcdOn = (getByteAt(IO_LCDC) & 0x80) == 0x80;
-
-            // when LCD is off, always return 0
-            if(!isLcdOn) {
-                return 0x00;
-            }
-        } else if(address >= 0xFF4C && address <= 0xFF7F) {
-            // addresses between 0xFF4C and 0xFF7F always return 0xFF
-            return 0xFF;
-        } else {
-            return value;
-        }
+        return readIO(address);
     } else if(address <= 0xFFFE) {
         addr = 0x7E - (0xFFFE - address);
         return hram[addr];
@@ -97,7 +42,7 @@ byte Memory::getByteAt(word address) {
     }
 }
 
-void Memory::setByteAt(word address, byte value) {
+void Memory::writeByte(word address, byte value) {
     word addr;
 
     if(address <= 0x7FFF) {
@@ -113,7 +58,7 @@ void Memory::setByteAt(word address, byte value) {
     } else if(address <= 0xBFFF) {
         addr = 0x1FFF - (0xBFFF - address);
 
-        if(isRamEnabled) {
+        if(isRamBankEnabled) {
             addr = (addr - 0x1FFF) + (currentRamBank * 0x2000);
         }
 
@@ -138,85 +83,150 @@ void Memory::setByteAt(word address, byte value) {
     } else if(address <= 0xFEFF) {
         // write are ignored on the gameboy
     } else if(address <= 0xFF7F) {
-        addr = 0x7F - (0xFF7F - address);
-
-        if(address == IO_DIVIDER) {
-            int targetBit = getTimerSystemBit();
-
-            // TIMA can be increased if the system counter has reached half the clocks it needs to increase
-            if((TIMER_SYSTEM_COUNTER & targetBit) == targetBit) {
-                incrementTima();
-            }
-
-            TIMER_SYSTEM_COUNTER = 0;
-            io[addr] = 0;
-            return;
-        } else if(address == IO_TIMA) {
-            if(TIMER_STATE == TIMER_STATE_OVERFLOW) {
-                // if a value is written to TIMA during the overflow period, the new value will override the TMA load
-                TIMER_IS_TIMA_CHANGED = true;
-                TIMER_TIMA_GLITCH = true;
-            } else if(TIMER_STATE == TIMER_STATE_LOADING_TMA) {
-                // if a value is written to TIMA during the period when TMA is being loaded, the write will be ignored
-                TIMER_IS_TIMA_CHANGED = true;
-            }
-
-            io[addr] = value;
-        } else if(address == IO_TAC) {
-            int tac = io[addr];
-            int oldEnable = tac & 0x04;
-            int newEnable = value & 0x04;
-            int targetBit = getTimerSystemBit();
-
-            // When disabling the timer, if the system counter has reached half the clocks it
-            // needs to increase, TIMA will increase
-            if((oldEnable == 0x04) && (newEnable == 0) && ((TIMER_SYSTEM_COUNTER & targetBit) == targetBit)) {
-                incrementTima();
-            }
-
-            int oldValue = tac & 0x03;
-            int newValue = value & 0x03;
-
-            // When changing TAC value, if the old selected bit was 0, the new one is 1 and the
-            // new enable bit is 1, TIMA will increase
-            if((oldValue == 0) && (newValue == 1) && (newEnable == 0x04)) {
-                incrementTima();
-            }
-        } else if(address == IO_INTERRUPT_FLAGS) {
-            // If TIMA has a pending overflow, the written value will overwrite the automatic flag set to 1.
-            // If a 0 is written during this time, the interrupt won't happen.
-            if(TIMER_STATE == TIMER_STATE_OVERFLOW) {
-                TIMER_IS_FLAGS_CHANGED = true;
-            } else if(TIMER_STATE == TIMER_STATE_LOADING_TMA) {
-                TIMER_IS_FLAGS_CHANGED = true;
-                TIMER_FLAG_VALUE = (value & INTERRUPT_TIMER) >> 2;
-            }
-
-            io[addr] = 0xE0 | value;
-        } else if(address == IO_LCD_STATUS) {
-            int lcdc = getByteAt(IO_LCDC);
-
-            // When LCD is off bits 0 through 2 return 0 also bit 7 is always 1
-            if((lcdc & 0x80) != 0x80) {
-                io[addr] = (0x80 | value) & 0xF8;
-            } else {
-                io[addr] = (0x80 | value);
-            }
-        } else if(address == IO_BG_PALETTE_DATA) {
-            BG_PALETTE_DATA = value;
-            io[addr] = value;
-        } else {
-            io[addr] = value;
-        }
-
-        if(address == IO_LY_COORDINATE || address == IO_LY_COMPARE) {
-            compareLY();
-        }
+        writeIO(address, value);
     } else if(address <= 0xFFFE) {
         addr = 0x7E - (0xFFFE - address);
         hram[addr] = value;
     } else {
         ie[0] = value;
+    }
+}
+
+byte Memory::readIO(word address) {
+    word addr = 0x7F - (0xFF7F - address);
+    byte value = io[addr];
+
+    if(address == IO_JOYPAD) {
+        // the upper 2 bits always returns 1
+        return 0xC0 | value;
+    } else if(address == IO_SERIAL_TRANSFER_CONTROL) {
+        // bits 1 through 6 return 1
+        return 0x7E | value;
+    } else if(address == IO_TAC) {
+        // the upper 5 bits always return 1
+        return 0xF8 | value;
+    } else if(address == IO_INTERRUPT_FLAGS) {
+        // the upper 3 bits always return 1
+        return 0xE0 | value;
+    } else if(address == IO_SOUND1_SWEEP) {
+        // the 7th bit always returns 1
+        return 0x80 | value;
+    } else if(address == IO_SOUND3_ENABLE) {
+        // bits 0 through 6  always return 1
+        return 0x7F | value;
+    } else if(address == IO_SOUND3_OUTPUT_LEVEL) {
+        // bits 0 through 4 and bit 7 always return 1
+        return 0x9F | value;
+    } else if(address == IO_SOUND4_LENGTH) {
+        // bits 6 and 7 always return 1
+        return 0xC0 | value;
+    } else if(address == IO_SOUND4_INITIAL) {
+        // bits 0 through 5 always return 1
+        return 0x3F | value;
+    } else if(address == IO_SOUND_ENABLE) {
+        // bits 4 through 6 always return 1
+        return 0x70 | value;
+    } else if(address == IO_LCD_STATUS) {
+        byte lcdc = readIO(IO_LCDC);
+
+        // when LCD is off, bits 0 through 2 return 0
+        if((lcdc & 0x80) != 0x80) {
+            return (0x80 | value) & 0xF8;
+        } else {
+            return (0x80 | value);
+        }
+    } else if(address == IO_LY_COORDINATE) {
+        bool isLcdOn = (readIO(IO_LCDC) & 0x80) == 0x80;
+
+        // when LCD is off, always return 0
+        if(!isLcdOn) {
+            return 0x00;
+        }
+    } else if(address >= 0xFF4C && address <= 0xFF7F) {
+        // addresses between 0xFF4C and 0xFF7F always return 0xFF
+        return 0xFF;
+    } else {
+        return value;
+    }
+}
+
+void Memory::writeIO(word address, byte value) {
+    word addr = 0x7F - (0xFF7F - address);
+
+    if(address == IO_SERIAL_TRANSFER_DATA) {
+        // TODO: remove this once I have LCD support
+        std::cout << (char)value;
+    } else if(address == IO_DIVIDER) {
+        int targetBit = getTimerSystemBit();
+
+        // TIMA can be increased if the system counter has reached half the clocks it needs to increase
+        if((TIMER_SYSTEM_COUNTER & targetBit) == targetBit) {
+            incrementTima();
+        }
+
+        TIMER_SYSTEM_COUNTER = 0;
+        io[addr] = 0;
+        return;
+    } else if(address == IO_TIMA) {
+        if(TIMER_STATE == TIMER_STATE_OVERFLOW) {
+            // if a value is written to TIMA during the overflow period, the new value will override the TMA load
+            TIMER_IS_TIMA_CHANGED = true;
+            TIMER_TIMA_GLITCH = true;
+        } else if(TIMER_STATE == TIMER_STATE_LOADING_TMA) {
+            // if a value is written to TIMA during the period when TMA is being loaded, the write will be ignored
+            TIMER_IS_TIMA_CHANGED = true;
+        }
+
+        io[addr] = value;
+    } else if(address == IO_TAC) {
+        int tac = io[addr];
+        int oldEnable = tac & 0x04;
+        int newEnable = value & 0x04;
+        int targetBit = getTimerSystemBit();
+
+        // When disabling the timer, if the system counter has reached half the clocks it
+        // needs to increase, TIMA will increase
+        if((oldEnable == 0x04) && (newEnable == 0) && ((TIMER_SYSTEM_COUNTER & targetBit) == targetBit)) {
+            incrementTima();
+        }
+
+        int oldValue = tac & 0x03;
+        int newValue = value & 0x03;
+
+        // When changing TAC value, if the old selected bit was 0, the new one is 1 and the
+        // new enable bit is 1, TIMA will increase
+        if((oldValue == 0) && (newValue == 1) && (newEnable == 0x04)) {
+            incrementTima();
+        }
+    } else if(address == IO_INTERRUPT_FLAGS) {
+        // If TIMA has a pending overflow, the written value will overwrite the automatic flag set to 1.
+        // If a 0 is written during this time, the interrupt won't happen.
+        if(TIMER_STATE == TIMER_STATE_OVERFLOW) {
+            TIMER_IS_FLAGS_CHANGED = true;
+        } else if(TIMER_STATE == TIMER_STATE_LOADING_TMA) {
+            TIMER_IS_FLAGS_CHANGED = true;
+            TIMER_FLAG_VALUE = (value & INTERRUPT_TIMER) >> 2;
+        }
+
+        io[addr] = 0xE0 | value;
+    } else if(address == IO_LCD_STATUS) {
+        int lcdc = readIO(IO_LCDC);
+
+        // When LCD is off bits 0 through 2 return 0 also bit 7 is always 1
+        if((lcdc & 0x80) != 0x80) {
+            io[addr] = (0x80 | value) & 0xF8;
+        } else {
+            io[addr] = (0x80 | value);
+        }
+    } else if(address == IO_BG_PALETTE_DATA) {
+        BG_PALETTE_DATA = value;
+        io[addr] = value;
+    } else {
+        io[addr] = value;
+    }
+
+    if(address == IO_LY_COORDINATE || address == IO_LY_COMPARE) {
+        compareLY();
     }
 }
 
@@ -230,24 +240,24 @@ byte* Memory::getRom() {
 }
 
 void Memory::updateDiv(byte value) {
-    setByteAt(IO_DIVIDER, value);
+    writeIO(IO_DIVIDER, value);
 }
 
 int Memory::getTimerSystemBit() {
-    byte tac = getByteAt(IO_TAC) & 0x03;
+    byte tac = readIO(IO_TAC) & 0x03;
     return 1 << (9 - (2 * tac));
 }
 
 void Memory::incrementTima() {
-    int tima = getByteAt(IO_TIMA) + 1;
+    int tima = readIO(IO_TIMA) + 1;
 
     if(tima > 0xFF) {
-        tima = getByteAt(IO_TMA);
-        int flags = getByteAt(IO_INTERRUPT_FLAGS) | INTERRUPT_TIMER;
-        setByteAt(IO_INTERRUPT_FLAGS, flags);
+        tima = readIO(IO_TMA);
+        int flags = readIO(IO_INTERRUPT_FLAGS) | INTERRUPT_TIMER;
+        writeIO(IO_INTERRUPT_FLAGS, flags);
     }
 
-    setByteAt(IO_TIMA, tima);
+    writeIO(IO_TIMA, tima);
 }
 
 /**
@@ -267,16 +277,16 @@ void Memory::compareLY() {
 
     */
 
-    byte lcdc = getByteAt(IO_LCDC);
+    byte lcdc = readIO(IO_LCDC);
 
     // don't compare ly if LCD is OFF
     if((lcdc & 0x80) != 0x80) {
         return;
     }
 
-    byte lyc = getByteAt(IO_LY_COMPARE);
-    byte ly = getByteAt(IO_LY_COORDINATE);
-    byte status = getByteAt(IO_LCD_STATUS);
+    byte lyc = readIO(IO_LY_COMPARE);
+    byte ly = readIO(IO_LY_COORDINATE);
+    byte status = readIO(IO_LCD_STATUS);
 
     // the enable bit is NOT enabled. skip check.
     if((status & 0x40) != 0x40) {
@@ -284,16 +294,16 @@ void Memory::compareLY() {
     }
 
     if(lyc == ly) {
-        byte interruptFlags = getByteAt(IO_INTERRUPT_FLAGS);
+        byte interruptFlags = readIO(IO_INTERRUPT_FLAGS);
 
         // set the coincidence flag
-        setByteAt(IO_LCD_STATUS, status | 0x04);
+        writeIO(IO_LCD_STATUS, status | 0x04);
 
         // request LCD STAT interrupt
-        setByteAt(IO_INTERRUPT_FLAGS, interruptFlags | INTERRUPT_LCD_STAT);
+        writeIO(IO_INTERRUPT_FLAGS, interruptFlags | INTERRUPT_LCD_STAT);
     } else {
         // clear the coincidence flag
-        setByteAt(IO_LCD_STATUS, status | ~0x04);
+        writeIO(IO_LCD_STATUS, status | ~0x04);
     }
 }
 
@@ -329,93 +339,82 @@ int Memory::getRomBankType(byte value) {
 }
 
 void Memory::writeBank(word address, byte value) {
-    /* if(address <= 0x1FFF) {
-        if(romBankType == ROM_BANK_MBC1 || romBankType == ROM_BANK_MBC2) {
-            enableRamBanking(address, value);
+    if(address <= 0x1FFF) { // RAM enable
+        /* 
+            Before a game is able to use the RAM, it must be specifically enabled. This is done by writing a value with the
+            lower 4 bits being $0A somewhere in this address space. To disable RAM, any number except $0A can be written.
+            It does not matter where it is written, just as long as it within the address range. You will notice that this address range
+            is part of the first ROM bank, which is read only. Because it is ROM, there is obviously no way to actually write data
+            to those memory locations. Instead, the write call is "intercepted" and interpreted differently by the MBC.
+        */
+        isRamBankEnabled = (value & 0x0A) == 0x0A;
+    } else if(address <= 0x3FFF) { // ROM Bank Number
+        /*
+            Writing a value to this address range will select the lower 5 bits of the bank number. There are a few special cases though.
+            If the value $00 is written, it will converted to bank $01. This is not an issue because bank $00 is always present at $0000-$3FFF.
+            The issue lies in writing the values $20, $40, and $60. When these values are written, instead of addressing the correct ROM banks
+            they will address banks $21, $41 and $61 respectively. I couldn't find an explanation of why this takes place, but I assume it has
+            something to do with how the lower 5 bits are used when choosing the bank. Each of these numbers have all zeros as the lower 5 bits (0x0XX00000).
+            This issue is not present in MBC2 and MBC3.
+
+            Switching to a ROM Bank < $20
+            -----------------------------
+            Switching to banks $01-$1F is very simple. We only need to write our intended bank to $2000-$3FFF. Here we are switching to bank $05:
+
+                ld $2000, $05
+                ; Now able to read data from bank $05
+        
+
+            Switching to a ROM Bank > $1F
+            -----------------------------
+            To switch to a ROM bank greater than $1F, there is some extra legwork to be done. First, we need to switch to the ROM banking mode.
+            Then we write the lower 5 bits to $2000-$3FFF and the upper 2 bits to $4000-$5FFF. For this example, I will be loading bank $46.
+            This value is 0b0100 0b0110 in binary.
+                ld $6000, $00    ; Set ROM mode
+                ld $2000, $06    ; Set lower 5 bits, could also use $46
+                ld $4000, $02    ; Set upper 2 bits
+                ; Now able to read data from bank $46
+        */
+        if(value == 0x00 || value == 0x20 || value == 0x40 || value == 0x60) {
+            value++;
         }
-    } else if(address <= 0x3FFF) {
-        if(romBankType == ROM_BANK_MBC1 || romBankType == ROM_BANK_MBC2) {
-            changeLowRomBank(value);
-        }
-    } else if(address <= 0x5FFF) {
-        if(romBankType == ROM_BANK_MBC1) {
-            changeHighRomBank(value);
+
+        if(value < 0x20) {
+            currentRomBank = value & 0x1F;
         } else {
-            changeRamBank(value);
+            currentRomBank = (value & 0x1F) | currentRomBank;
         }
-    } else if(address <= 0x7FFF) {
-        if(romBankType == ROM_BANK_MBC1) {
-            changeBankMode(value);
-        }
-    } */
-
-    if(address <= 0x1FFF) {
-        // writing to this address range any value with 0x0A in the lower nibble enables RAM
-        if(romBankType == ROM_BANK_MBC1) {
-            isRamEnabled = (value & 0x0A) == 0x0A;
-        }
-    } else if(address <= 0x3FFF) {
-        // this range is used to select the lower 5 bits of ROM bank number (0x01 - 0x1F)
-        // write 0x00 will be translated to 0x01. This will make banks 0x00, 0x20, 0x40 and 0x60 impossible to map.
-        // banks 0x01, 0x21, 0x41 and 0x61 will be selected instead
-    } else if(address <= 0x5FFF) {
+    } else if(address <= 0x5FFF) { // RAM Bank Number or Upper Bits of ROM Bank Number
         // this is a 2 bit register that can select RAM banks 0 - 3 or specify the upper 2 bits of ROM bank, depending on the cartridge.
-    } else {
-        // this is a 1 bit register that selects if the two bits in register at 0x4000 - 0x5FFF are used to select
-        // the two upper bits of the ROM bank number or the RAM bank number
-        // mode 0 will enable ROM banking mode (enabled by default).
-        // only RAM bank 0 can be accessed in this mode, even if the mapped bank before the mode change wasn't bank 0
-        // mode 1 will enable RAM banking mode and only ROM banks 0x01 - 0x1F will be able to be accessed.
-        // if other ROM bank is selected ROM bank will be changed to the corresponding in 0x01 - 0x1F by clearing the upper 2 bits
-    }
-}
 
-void Memory::enableRamBanking(word address, byte value) {
-    // when a game wants to enable RAM banking bit 4 must be 0 for MBC2 cartridges
-    if(romBankType == ROM_BANK_MBC2 && (address >> 0x10) == 0x10) {
-        return;
-    }
+        /*
+            Writing to this area of memory will effect the ROM or RAM modes, depending on what is written in $6000-$7FFF. Only the first
+            two bits of the value matter. If in ROM mode (no RAM bank switching), it will specify the upper two bits of the ROM bank number.
+            In this mode, only RAM bank $00 may be used.
 
-    // when a game wants to write to RAM banks the lower nibble must be 0x0A
-    isRamEnabled = (value & 0x0F) == 0x0A;
-}
-
-void Memory::changeLowRomBank(byte value) {
-    if(romBankType == ROM_BANK_MBC2) {
-        currentRomBank = value & 0x0F;
-
-        // rom bank can't be zero
-        if(currentRomBank == 0) {
-            currentRomBank = 1;
+            If in RAM mode, it will specify which RAM bank to load into $A000-$BFFF. In this mode, only ROM banks $00-$1F may be used.
+        */
+        if(!isRamBankEnabled) {
+            // set the upper 2 bits
+            currentRomBank = (value & 0x02) << 5 | currentRomBank;
+        } else {
+            currentRamBank = value & 0x03;
         }
-
-        return;
-    }
-
-    currentRomBank = (currentRomBank & 0xE0) | (value &0x1F);
-
-    if(currentRomBank == 0) {
-        currentRomBank = 1;
-    }
-}
-
-void Memory::changeHighRomBank(byte value) {
-    currentRomBank = (currentRomBank & 0x1F) | (value & 0xE0);
-
-    if(currentRomBank == 0) {
-        currentRomBank = 1;
-    }
-}
-
-void Memory::changeRamBank(byte value) {
-    currentRamBank = value & 0x03;
-}
-
-void Memory::changeBankMode(byte value) {
-    if((value & 0x01) == 0) {
-        isRomEnabled = true;
-        currentRamBank = 0;
-    } else {
-        isRomEnabled = false;
+    } else { // ROM/RAM Mode Select
+        /*
+            Writing either $00 or $01 to this area will select which mode the MBC is in. On an MBC1, there are two modes: 16Mb ROM/8KB RAM and 4Mb ROM/32KB RAM.
+            The game is able to switch between the modes on the fly, allowing a game to access extended ROM banks during normal operation and switch to
+            RAM mode temporarily when data needs to be read. Valid values are $00 for ROM mode and $01 for RAM mode.
+        */
+        if((value & 0x01) == 0x01) {
+            // mode 1 will enable RAM banking mode and only ROM banks 0x01 - 0x1F will be able to be accessed.
+            // if other ROM bank is selected ROM bank will be changed to the corresponding in 0x01 - 0x1F by clearing the upper 2 bits
+            isRamBankEnabled = true;
+            currentRomBank = currentRomBank & 0x3F;
+        } else {
+            // mode 0 will enable ROM banking mode (enabled by default).
+            // only RAM bank 0 can be accessed in this mode, even if the mapped bank before the mode change wasn't bank 0
+            currentRamBank = 0;
+        }
     }
 }

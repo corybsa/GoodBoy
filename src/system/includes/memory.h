@@ -3,7 +3,6 @@
 
 #include "types.h"
 #include <functional>
-#include <array>
 
 /**
  * The GameBoy has 64KB of Memory.
@@ -72,15 +71,16 @@ public:
     int romBankType;
     int currentRomBank = 1;
     int currentRamBank = 0;
-    bool isRomEnabled = true;
-    bool isRamEnabled = false;
+    bool isRamBankEnabled = false;
 
     Memory() = default;
 
     void setGpuCallback(std::function<void(word, byte, byte)> arg2);
 
-    byte getByteAt(word address);
-    void setByteAt(word address, byte value);
+    byte readByte(word address);
+    void writeByte(word address, byte value);
+    byte readIO(word address);
+    void writeIO(word address, byte value);
     void loadRom(byte* rom);
     byte* getRom();
     void updateDiv(byte value);
@@ -89,11 +89,6 @@ public:
     void compareLY();
     int getRomBankType(byte value);
     void writeBank(word address, byte value);
-    void enableRamBanking(word address, byte value);
-    void changeLowRomBank(byte value);
-    void changeHighRomBank(byte value);
-    void changeRamBank(byte value);
-    void changeBankMode(byte value);
 };
 
 #endif

@@ -1,11 +1,10 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <fstream>
-#include <array>
 
 #include "system/includes/gameboy.h"
 
-byte* openFile();
+byte* openFile(char* name);
 
 int main(int argc, char* args[]) {
     /* SDL_Window* window = NULL;
@@ -29,11 +28,13 @@ int main(int argc, char* args[]) {
     SDL_DestroyWindow(window);
     SDL_Quit(); */
 
-    byte* rom = openFile();
+    // byte* rom = openFile("./resources/roms/tests/mooneye/acceptance/instr/daa.gb");
+    byte* rom = openFile("./resources/roms/tests/blargg/cpu_instrs/cpu_instrs.gb");
 
     GameBoy* gb = new GameBoy();
     gb->loadRom(rom);
     std::cout << gb->cartridge->toString();
+    // gb->run();
     
     // gb->loadRom(rom);
     // printf("%s", gb->cartridge->toString());
@@ -62,8 +63,8 @@ int main(int argc, char* args[]) {
     return 0;
 }
 
-byte* openFile() {
-    std::ifstream file("./resources/roms/tests/mooneye/acceptance/instr/daa.gb");
+byte* openFile(char* name) {
+    std::ifstream file(name);
     file.seekg(0, std::ios::end);
     size_t length = file.tellg();
     char* ret = new char[length];

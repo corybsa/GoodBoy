@@ -23,7 +23,6 @@ public:
 
     void reset();
     void tick(unsigned long cycles);
-    void setLY(byte value);
     void requestInterrupt(int interrupt);
     void changeMode(int mode);
     void updateTiles(word address, byte byte1, byte byte2);

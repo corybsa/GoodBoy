@@ -80,11 +80,11 @@ void CPU::reset() {
 
 */
 void CPU::writeByte(int address, int value) {
-    memory->setByteAt(address, value);
+    memory->writeByte(address, value);
 }
 
 byte CPU::readByte(int address) {
-    return memory->getByteAt(address);
+    return memory->readByte(address);
 }
 
 void CPU::tick() {
@@ -150,6 +150,12 @@ void CPU::resetFlags(int flags) {
  * Keeps the CPU from running as fast as it can. This will keep the frame rate at 60 fps.
  */
 void CPU::synchronize() {
+    // only sleep after ticking 1000 cycles
+    // TODO: is this a good idea?
+    if(cyclesSinceLastSync < 1000) {
+        return;
+    }
+
     // our target sleep time is the length in time the previous instruction took.
     unsigned long long target = (cyclesSinceLastSync * 1000000000ULL) / CPU_FREQUENCY;
 
@@ -160,7 +166,7 @@ void CPU::synchronize() {
     // We subtract the nanoseconds to see if the CPU is running too fast.
     // If sleepDuration is positive that means that the CPU is running incredibly fast (for GameBoy standards, anyway),
     //   and we need to slow it down by sleeping.
-    unsigned long long sleepDuration = target + lastSyncTime - nanoseconds;
+    unsigned long long sleepDuration = target + nanoseconds - lastSyncTime;
 
 // TODO: Does this happend in C++?
     // There's a weird lag during vblank, so we can disable sleep during vblank

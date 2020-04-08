@@ -22,9 +22,7 @@ void Cartridge::parseTitle() {
     int position = 0;
 
     for(int i = 0x0134; i <= 0x0142; i++) {
-        if((rom[i] >= 65 && rom[i] <= 90) || (rom[i] >= 97 && rom[i] <= 122)) {
-            title.push_back((char)rom[i]);
-        }
+        title.push_back((char)rom[i]);
     }
 }
 

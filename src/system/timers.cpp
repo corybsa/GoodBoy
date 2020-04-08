@@ -20,7 +20,7 @@ void Timers::tick(int cycles) {
 
     switch(TIMER_STATE) {
         case TIMER_STATE_COUNTING: {
-            byte tac = memory->getByteAt(IO_TAC);
+            byte tac = memory->readIO(IO_TAC);
             bool isEnabled = (tac & 0x04) == 0x04;
 
             if(isEnabled) {
@@ -30,16 +30,16 @@ void Timers::tick(int cycles) {
 
                 // check if TIMA has passed the max amount of clocks
                 if(TIMER_TIMA_COUNTER >= tacClocks) {
-                    int result = memory->getByteAt(IO_TIMA) + 1;
+                    int result = memory->readIO(IO_TIMA) + 1;
 
                     if(result > 0xFF) {
                         // when TIMA overflows its value is 0 for 4 cycles and the interrupt is also delayed during this time
-                        memory->setByteAt(IO_TIMA, 0x00);
+                        memory->writeIO(IO_TIMA, 0x00);
 
                         // keep track of the delay
                         TIMER_STATE = TIMER_STATE_OVERFLOW;
                     } else {
-                        memory->setByteAt(IO_TIMA, result);
+                        memory->writeIO(IO_TIMA, result);
                     }
 
                     TIMER_TIMA_COUNTER = TIMER_TIMA_COUNTER - tacClocks;
@@ -52,8 +52,8 @@ void Timers::tick(int cycles) {
             // if a value is written to TIMA during the overflow period the new value will override the TMA load
             if(!TIMER_IS_TIMA_CHANGED) {
                 // set TIMA to the value of TMA
-                byte tma = memory->getByteAt(IO_TMA);
-                memory->setByteAt(IO_TIMA, tma);
+                byte tma = memory->readIO(IO_TMA);
+                memory->writeIO(IO_TIMA, tma);
             }
 
             TIMER_STATE = TIMER_STATE_LOADING_TMA;
@@ -69,8 +69,8 @@ void Timers::tick(int cycles) {
             //   the new value and TIMA will receive it without us doing anything.
             if(TIMER_IS_TIMA_CHANGED && !TIMER_TIMA_GLITCH) {
                 // set TIMA to the value of TMA
-                byte tma = memory->getByteAt(IO_TMA);
-                memory->setByteAt(IO_TIMA, tma);
+                byte tma = memory->readIO(IO_TMA);
+                memory->writeIO(IO_TIMA, tma);
             }
 
             // If IF is written during this period, the written value will overwrite the automatic flag set to 1.
@@ -78,8 +78,8 @@ void Timers::tick(int cycles) {
             // The TIMA glitch prevents this from happening regardless of other conditions.
             if(TIMER_IS_FLAGS_CHANGED && TIMER_FLAG_VALUE == 1 && !TIMER_TIMA_GLITCH) {
                 // request interrupt
-                byte flags = memory->getByteAt(IO_INTERRUPT_FLAGS) | INTERRUPT_TIMER;
-                memory->setByteAt(IO_INTERRUPT_FLAGS, flags);
+                byte flags = memory->readIO(IO_INTERRUPT_FLAGS) | INTERRUPT_TIMER;
+                memory->writeIO(IO_INTERRUPT_FLAGS, flags);
             }
 
             TIMER_IS_TIMA_CHANGED = false;

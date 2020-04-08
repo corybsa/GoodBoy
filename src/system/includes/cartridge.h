@@ -2,7 +2,6 @@
 #define GOODBOY_CARTRIDGE_H
 
 #include "types.h"
-#include <array>
 #include <string>
 
 class Cartridge {
