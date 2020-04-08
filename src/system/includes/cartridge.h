@@ -30,6 +30,7 @@ public:
     void parseDestinationCode();
     void calculateHeaderChecksum();
     void calculateGlobalChecksum();
+    std::string intToHex(word value);
     std::string toString();
 };
 

@@ -82,7 +82,7 @@ void Cartridge::calculateHeaderChecksum() {
     if(checksum == rom[0x014D]) {
         headerChecksum = "OK";
     } else {
-        headerChecksum = "Failed. Expected %04X to be %04X";
+        headerChecksum = "Failed. Expected 0x" + intToHex(checksum) + " to be 0x" + intToHex(rom[0x014D]);
     }
 }
 
@@ -99,8 +99,20 @@ void Cartridge::calculateGlobalChecksum() {
     if(checksum == romChecksum) {
         globalChecksum = "OK";
     } else {
-        globalChecksum = "Failed. Expected %04X to be %04X";
+        globalChecksum = "Failed. Expected 0x" + intToHex(checksum) + " to be 0x" + intToHex(romChecksum);
     }
+}
+
+std::string Cartridge::intToHex(word value) {
+    char* digits = "0123456789ABCDEF";
+    auto hex_len = sizeof(value) << 1;
+    std::string rc(hex_len, '0');
+    
+    for (size_t i = 0, j = (hex_len-1) * 4 ; i < hex_len; ++i, j -= 4) {
+        rc[i] = digits[(value >> j) & 0x0f];
+    }
+
+    return rc;
 }
 
 std::string Cartridge::toString() {
