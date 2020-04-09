@@ -13,6 +13,13 @@ SRC      :=                  \
 
 OBJECTS  := $(SRC:%.cpp=$(OBJ_DIR)/%.o)
 
+# detect MacOS
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S),Darwin)
+	CXXFLAGS += -std=c++1z -fms-extensions -Wno-gnu-anonymous-struct -Wno-nested-anon-types -Wwritable-strings
+endif
+
 all: clean
 all: build $(APP_DIR)/$(TARGET)
 
