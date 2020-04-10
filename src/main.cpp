@@ -34,11 +34,6 @@ int main(int argc, char* args[]) {
         bool quit = false;
         SDL_Event e;
 
-        if(!debugWindow.init("Debugger", 600, 480)) {
-            printf("Debug window could not be created!\n");
-            quit = true;
-        }
-
         while(!quit) {
 
             // handle events on queue
@@ -68,13 +63,25 @@ int main(int argc, char* args[]) {
                             debugWindow.askForBreakpoint();
 
                             break;
+                        case SDLK_F12:
+                            if(debugWindow.window == NULL) {
+                                if(!debugWindow.init("Debugger", 600, 480)) {
+                                    printf("Debug window could not be created!\n");
+                                    quit = true;
+                                }
+                            }
+
+                            break;
                     }
                 }
             }
 
             // update windows
             mainWindow.render();
-            debugWindow.render();
+
+            if(debugWindow.window != NULL) {
+                debugWindow.render();
+            }
 
             // check windows
             bool allWindowsClosed = !mainWindow.isShown && !debugWindow.isShown;

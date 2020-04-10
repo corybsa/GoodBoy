@@ -2,6 +2,19 @@
 #include "includes/globals.h"
 #include <iostream>
 
+Memory::Memory() {
+    cartridge = new byte[0x800000];
+    vram = new byte[0x2000];
+    sram = new byte[0x8000];
+    wram = new byte[0x2000];
+    eram = new byte[0x1E00];
+    oam = new byte[0xA0];
+    fea0_feff = new byte[0x60];
+    io = new byte[0x80];
+    hram = new byte[0x7F];
+    ie = new byte[0x01];
+}
+
 void Memory::setGpuCallback(std::function<void(word, byte, byte)> callback) {
     gpuCallback = callback;
 }

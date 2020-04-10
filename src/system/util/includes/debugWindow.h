@@ -17,7 +17,9 @@ public:
     virtual bool init(char* title, int w, int h);
     void render();
     void askForBreakpoint();
-    char* intToHex(char* info, word value);
+    char* wordToHex(char* info, word value);
+    char* byteToHex(char* info, byte value);
+    char* boolToHex(char* info, bool value);
 };
 
 #endif

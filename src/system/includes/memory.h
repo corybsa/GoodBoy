@@ -54,16 +54,16 @@
  */
 class Memory {
 private:
-    byte* cartridge = new byte[0x800000];
-    byte* vram = new byte[0x2000];
-    byte* sram = new byte[0x8000];
-    byte* wram = new byte[0x2000];
-    byte* eram = new byte[0x1E00];
-    byte* oam = new byte[0xA0];
-    byte* fea0_feff = new byte[0x60];
-    byte* io = new byte[0x80];
-    byte* hram = new byte[0x7F];
-    byte* ie = new byte[0x01];
+    byte* cartridge;
+    byte* vram;
+    byte* sram;
+    byte* wram;
+    byte* eram;
+    byte* oam;
+    byte* fea0_feff;
+    byte* io;
+    byte* hram;
+    byte* ie;
 
     std::function<void(word, byte, byte)> gpuCallback;
 
@@ -73,7 +73,7 @@ public:
     int currentRamBank = 0;
     bool isRamBankEnabled = false;
 
-    Memory() = default;
+    Memory();
 
     void setGpuCallback(std::function<void(word, byte, byte)> arg2);
 
