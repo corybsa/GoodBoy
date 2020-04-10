@@ -18,7 +18,7 @@ public:
 
     Window();
     
-    bool init(char* title, int w, int h);
+    virtual bool init(char* title, int w, int h);
     void handleEvent(SDL_Event &e);
     void focus();
     void render();

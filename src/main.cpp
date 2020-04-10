@@ -3,16 +3,18 @@
 #include <fstream>
 
 #include "system/util/includes/window.h"
+#include "system/util/includes/debugWindow.h"
 #include "system/includes/gameboy.h"
 
 byte* openFile(char* name);
 
 int main(int argc, char* args[]) {
+    GameBoy* gb = new GameBoy();
     Window mainWindow;
-    Window debugWindow;
+    DebugWindow debugWindow(gb);
     bool success = true;
 
-    if(SDL_Init(SDL_INIT_VIDEO) < 0) {
+    if(SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
         success = false;
     } else {
@@ -29,11 +31,13 @@ int main(int argc, char* args[]) {
     if(!success) {
         printf("Failed to initialize!");
     } else {
-        debugWindow.init("Debugger", 600, 480);
-
         bool quit = false;
-
         SDL_Event e;
+
+        if(!debugWindow.init("Debugger", 600, 480)) {
+            printf("Debug window could not be created!\n");
+            quit = true;
+        }
 
         while(!quit) {
 
@@ -52,7 +56,18 @@ int main(int argc, char* args[]) {
                 if(e.type == SDL_KEYDOWN) {
                     switch(e.key.keysym.sym) {
                         case SDLK_q:
+                            if(mainWindow.isKeyboardFocused) {
+                                quit = true;
+                            }
+
+                            // TODO: remove this when the time is right
                             quit = true;
+
+                            break;
+                        case SDLK_b:
+                            debugWindow.askForBreakpoint();
+
+                            break;
                     }
                 }
             }
@@ -73,7 +88,6 @@ int main(int argc, char* args[]) {
     // byte* rom = openFile("./resources/roms/tests/mooneye/acceptance/instr/daa.gb");
     byte* rom = openFile("./resources/roms/tests/blargg/cpu_instrs/cpu_instrs.gb");
 
-    GameBoy* gb = new GameBoy();
     gb->loadRom(rom);
     std::cout << gb->cartridge->toString();
     // gb->run();

@@ -1,22 +1,41 @@
 #include "includes/texture.h"
+#include <iostream>
 
-Texture::Texture() {
+Texture::Texture(TTF_Font* f, SDL_Renderer* r) {
     texture = NULL;
     width = 0;
     height = 0;
-    font = TTF_OpenFont("../../../resources/fonts/consolas.ttf", 28);
-
-    if(font == NULL) {
-        printf("Failed to load font! SDLttf Error: %s\n", TTF_GetError());
-    }
+    font = f;
+    renderer = r;
 }
 
-bool Texture::loadFromRenderedText(char* text, SDL_Color color) {
+Texture::~Texture() {
+    TTF_CloseFont(font);
+    TTF_Quit();
+    font = NULL;
+    free();
+}
+
+void Texture::renderText(char* text, int x, int y) {
     // get rid of pre-existing texture
     free();
 
+    if(font == NULL) {
+        printf("Failed to load font! SDL_ttf Error: %s\n", TTF_GetError());
+        return;
+    }
+
+    //Set texture filtering to linear
+    if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
+        printf( "Warning: Linear texture filtering not enabled!" );
+    }
+
     // render text surface
-    SDL_Surface* surface = TTF_RenderText_Solid(font, text, color);
+    SDL_Color black = { 0x00, 0x00, 0x00 };
+    SDL_Color white = { 0xFF, 0xFF, 0xFF }; 
+
+    // the _Shaded suffix means anti-alias
+    SDL_Surface* surface = TTF_RenderText_Shaded(font, text, black, white);
 
     if(surface == NULL) {
         printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
@@ -35,7 +54,11 @@ bool Texture::loadFromRenderedText(char* text, SDL_Color color) {
         SDL_FreeSurface(surface);
     }
 
-    return texture != NULL;
+    if(texture == NULL) {
+        printf("Could not create texture!\n");
+    } else {
+        render(x, y);
+    }
 }
 
 void Texture::free() {
@@ -70,5 +93,7 @@ void Texture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* cent
     }
 
     // render to the screen
-    SDL_RenderCopyEx(renderer, texture, clip, &renderQuad, angle, center, flip);
+    if(SDL_RenderCopyEx(renderer, texture, clip, &renderQuad, angle, center, flip) < 0) {
+        printf("Render error! SDL Error: %s\n", SDL_GetError());
+    }
 }

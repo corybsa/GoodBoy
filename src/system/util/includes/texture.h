@@ -4,7 +4,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
-#include <string>
 #include "../../includes/types.h"
 
 class Texture {
@@ -13,11 +12,12 @@ public:
     int height;
     SDL_Texture* texture;
     TTF_Font* font;
+    SDL_Renderer* renderer;
 
-    Texture();
+    Texture(TTF_Font* f, SDL_Renderer* r);
     ~Texture();
 
-    bool loadFromRenderedText(char* text, SDL_Color color);
+    void renderText(char* text, int x, int y);
     void free();
     void setColor(byte red, byte green, byte blue);
     void setBlendMode(SDL_BlendMode blending);

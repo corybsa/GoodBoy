@@ -1,4 +1,5 @@
 #include "includes/window.h"
+#include "includes/texture.h"
 
 Window::Window() {
     window = NULL;
@@ -15,7 +16,7 @@ Window::Window() {
 }
 
 bool Window::init(char* title, int w, int h) {
-    window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+    window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_SHOWN);
 
     if(window != NULL) {
         isMouseFocused = true;
@@ -23,7 +24,7 @@ bool Window::init(char* title, int w, int h) {
         width = w;
         height = h;
 
-        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
         if(renderer == NULL) {
             printf("Rederer could not be created SDL Error: %s\n", SDL_GetError());
