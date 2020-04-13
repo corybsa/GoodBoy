@@ -21,6 +21,7 @@ public:
     bool isSuper;
 
     Cartridge(byte* data);
+    ~Cartridge();
 
     void parseTitle();
     void parseLicense();

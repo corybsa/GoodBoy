@@ -74,6 +74,7 @@ public:
     bool isRamBankEnabled = false;
 
     Memory();
+    ~Memory();
 
     void setGpuCallback(std::function<void(word, byte, byte)> callback);
 

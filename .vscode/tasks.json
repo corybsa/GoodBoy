@@ -6,7 +6,7 @@
         {
             "label": "make all",
             "type": "shell",
-            "command": "make all && ./build/apps/goodboy",
+            "command": "make all && ./build/app/goodboy",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -28,6 +28,23 @@
             "label": "make debug",
             "type": "shell",
             "command": "make debug",
+            "problemMatcher": {
+              "owner": "cpp",
+              "fileLocation": ["relative", "${workspaceFolder}"],
+              "pattern": {
+                "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                "file": 1,
+                "line": 2,
+                "column": 3,
+                "severity": 4,
+                "message": 5
+              }
+            }
+        },
+        {
+            "label": "make test",
+            "type": "shell",
+            "command": "make test && ./build/test/app/goodboy",
             "problemMatcher": {
               "owner": "cpp",
               "fileLocation": ["relative", "${workspaceFolder}"],

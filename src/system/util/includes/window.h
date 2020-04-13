@@ -19,10 +19,10 @@ public:
     Window();
     
     virtual bool init(char* title, int w, int h);
+    virtual void free();
     void handleEvent(SDL_Event &e);
     void focus();
     void render();
-    void free();
     int getWidth();
     int getHeight();
 };

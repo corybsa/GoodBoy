@@ -15,6 +15,7 @@ public:
     DebugWindow(GameBoy* gameBoy);
 
     virtual bool init(char* title, int w, int h);
+    virtual void free();
     void render();
     void askForBreakpoint();
     char* wordToHex(char* info, word value);

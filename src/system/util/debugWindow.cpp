@@ -26,6 +26,13 @@ bool DebugWindow::init(char* title, int w, int h) {
     return success;
 }
 
+void DebugWindow::free() {
+    Window::free();
+
+    delete texture;
+    texture = NULL;
+}
+
 void DebugWindow::askForBreakpoint() {
     if(isKeyboardFocused) {
         printf("testing\n");

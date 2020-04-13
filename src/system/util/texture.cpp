@@ -16,6 +16,15 @@ Texture::~Texture() {
     free();
 }
 
+void Texture::free() {
+    if(texture != NULL) {
+        SDL_DestroyTexture(texture);
+        texture = NULL;
+        width = 0;
+        height = 0;
+    }
+}
+
 void Texture::renderText(char* text, int x, int y) {
     // get rid of pre-existing texture
     free();
@@ -58,15 +67,6 @@ void Texture::renderText(char* text, int x, int y) {
         printf("Could not create texture!\n");
     } else {
         render(x, y);
-    }
-}
-
-void Texture::free() {
-    if(texture != NULL) {
-        SDL_DestroyTexture(texture);
-        texture = NULL;
-        width = 0;
-        height = 0;
     }
 }
 

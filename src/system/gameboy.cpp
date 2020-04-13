@@ -19,6 +19,12 @@ GameBoy::~GameBoy() {
     delete lcd;
     delete gpu;
     delete cpu;
+
+    memory = NULL;
+    timers = NULL;
+    lcd = NULL;
+    gpu = NULL;
+    cpu = NULL;
 }
 
 void GameBoy::reset() {

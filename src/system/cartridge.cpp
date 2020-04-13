@@ -17,6 +17,11 @@ Cartridge::Cartridge(byte* data) {
     calculateGlobalChecksum();
 }
 
+Cartridge::~Cartridge() {
+    delete[] rom;
+    rom = NULL;
+}
+
 void Cartridge::parseTitle() {
     title = "";
     int position = 0;

@@ -17,8 +17,8 @@ public:
     Texture(TTF_Font* f, SDL_Renderer* r);
     ~Texture();
 
-    void renderText(char* text, int x, int y);
     void free();
+    void renderText(char* text, int x, int y);
     void setColor(byte red, byte green, byte blue);
     void setBlendMode(SDL_BlendMode blending);
     void setAlpha(byte alpha);

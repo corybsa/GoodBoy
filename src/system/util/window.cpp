@@ -47,6 +47,21 @@ bool Window::init(char* title, int w, int h) {
     return window != NULL && renderer != NULL;
 }
 
+void Window::free() {
+    if(window != NULL) {
+        SDL_DestroyWindow(window);
+    }
+
+    if(renderer != NULL) {
+        SDL_DestroyRenderer(renderer);
+    }
+
+    isMouseFocused = false;
+    isKeyboardFocused = false;
+    width = 0;
+    height = 0;
+}
+
 void Window::handleEvent(SDL_Event &e) {
     if(e.type == SDL_WINDOWEVENT && e.window.windowID == windowId) {
         switch(e.window.event) {
@@ -122,16 +137,3 @@ void Window::render() {
         SDL_RenderPresent(renderer);
     }
 }
-
-void Window::free() {
-    if(window != NULL) {
-        SDL_DestroyWindow(window);
-    }
-
-    isMouseFocused = false;
-    isKeyboardFocused = false;
-    width = 0;
-    height = 0;
-}
-
-

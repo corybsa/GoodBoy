@@ -184,5 +184,6 @@ void CPUTest::nestedInterrupt() {
     gb->cpu->tick(); // halt
     expect(gb->cpu->isHalted, true, "should halt the cpu");
 
-    delete rom;
+    delete[] rom;
+    rom = NULL;
 }

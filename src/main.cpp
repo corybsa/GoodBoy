@@ -55,7 +55,7 @@ int main(int argc, char* args[]) {
                                 quit = true;
                             }
 
-                            // TODO: remove this when the time is right
+                            // TODO: remove this when the debugger is done
                             quit = true;
 
                             break;
@@ -122,6 +122,7 @@ int main(int argc, char* args[]) {
     printf("PC: %04X\n", gb->cpu->registers.PC); */
     
     delete gb;
+    gb = NULL;
     mainWindow.free();
     debugWindow.free();
     SDL_Quit();
