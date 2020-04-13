@@ -75,7 +75,7 @@ public:
 
     Memory();
 
-    void setGpuCallback(std::function<void(word, byte, byte)> arg2);
+    void setGpuCallback(std::function<void(word, byte, byte)> callback);
 
     byte readByte(word address);
     void writeByte(word address, byte value);
