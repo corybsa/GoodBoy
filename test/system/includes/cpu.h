@@ -13,7 +13,6 @@ public:
 
     void beforeAll();
     void beforeEach();
-    void tearDown();
 
     void setFlags();
     void resetFlags();

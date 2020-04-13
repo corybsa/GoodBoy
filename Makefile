@@ -1,5 +1,5 @@
 CXX      := -g++
-CXXFLAGS := -w -Wall -Wextra -Werror -pedantic-errors
+CXXFLAGS := -w -Wall -Wextra -Werror -pedantic-errors -fpermissive
 LDFLAGS  := -L/usr/lib -lstdc++ -lm -lSDL2 -lSDL2_ttf -lSDL2_image
 TARGET   := goodboy
 INCLUDE  := -Iinclude/

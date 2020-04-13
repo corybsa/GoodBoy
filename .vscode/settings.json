@@ -46,6 +46,7 @@
         "functional": "cpp",
         "iterator": "cpp",
         "thread": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "source_location": "cpp"
     }
 }

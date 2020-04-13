@@ -19,35 +19,8 @@ void Test::run() {
     }
 
     if(failed == 0) {
-        std::cout << "\033[0;32mAll tests passed!\033[0m\n";
+        std::cout << std::endl << "\033[1;32mAll tests passed!\033[0m" << std::endl;
     } else {
-        std::cout << +failed << " tests failed!\n";
-    }
-}
-
-void Test::expect(byte value, byte expected, char* message) {
-    if(value != expected) {
-        std::stringstream ss;
-        ss << std::hex << std::uppercase << "\033[0;31m" << message << "\033[0m" << " Expected $" << +value << " to be $" << +expected << "\n";
-        std::cout << ss.str();
-        failed++;
-    }
-}
-
-void Test::expect(word value, word expected, char* message) {
-    if(value != expected) {
-        std::stringstream ss;
-        ss << std::hex << std::uppercase << "\033[0;31m" << message << "\033[0m" << " Expected $" << +value << " to be $" << +expected << "\n";
-        std::cout << ss.str();
-        failed++;
-    }
-}
-
-void Test::expect(bool value, bool expected, char* message) {
-    if(value != expected) {
-        std::stringstream ss;
-        ss << "\033[0;31m" << message << "\033[0m" << " Expected " << value << " to be " << expected << "\n";
-        std::cout << ss.str();
-        failed++;
+        std::cout << std::endl << +failed << " test" << (failed == 1 ? "" : "s") << " failed!" << std::endl;
     }
 }
