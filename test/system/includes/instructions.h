@@ -62,6 +62,7 @@ public:
     void test_0x16();
     void test_0x17();
     void test_0x18();
+    void test_0x18_backwards();
     void test_0x19();
     void test_0x1A();
     void test_0x1B();
