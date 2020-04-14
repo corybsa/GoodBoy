@@ -11,7 +11,9 @@
 class Test {
 public:
     std::vector<std::function<void()>> tests;
-    int failed;
+    int testsFailed;
+    int testsPassed;
+    int testsTotal;
     char* white;
     char* red;
     char* cyan;

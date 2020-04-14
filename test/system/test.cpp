@@ -3,7 +3,9 @@
 #include <sstream>
 
 Test::Test() {
-    failed = 0;
+    testsFailed = 0;
+    testsPassed = 0;
+    testsTotal = 0;
     white = "\033[0m";
     red = "\033[1;31m";
     green = "\033[1;32m";
@@ -28,10 +30,10 @@ void Test::run() {
 
     tearDown();
 
-    if(failed == 0) {
-        std::cout << std::endl << green << "All tests passed!" << white << std::endl;
+    if(testsFailed == 0) {
+        std::cout << std::endl << green << +testsPassed << "/" << +testsTotal << " tests passed!" << white << std::endl;
     } else {
-        std::cout << std::endl << +failed << " test" << (failed == 1 ? "" : "s") << " failed!" << std::endl;
+        std::cout << std::endl << red << +testsFailed << "/" << +testsTotal << " tests failed!" << white << std::endl;
     }
 }
 
@@ -43,6 +45,10 @@ void Test::expect(size_t value, size_t expected, char* message, std::experimenta
         ss << std::dec << " in " << yellow << loc.file_name() << white << ", function " << magenta << loc.function_name();
         ss << white << " on " << magenta << "line " << loc.line() << white << std::endl;
         std::cout << std::endl << ss.str();
-        failed++;
+        testsFailed++;
+    } else {
+        testsPassed++;
     }
+
+    testsTotal++;
 }
