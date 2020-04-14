@@ -16,7 +16,7 @@ Memory::Memory() {
 }
 
 Memory::~Memory() {
-    delete[] cartridge;
+    // delete[] cartridge;
     delete[] vram;
     delete[] sram;
     delete[] wram;

@@ -121,8 +121,12 @@ int main(int argc, char* args[]) {
     printf("SP: %04X\n", gb->cpu->registers.SP);
     printf("PC: %04X\n", gb->cpu->registers.PC); */
     
+    delete rom;
+    rom = NULL;
+
     delete gb;
     gb = NULL;
+    
     mainWindow.free();
     debugWindow.free();
     SDL_Quit();

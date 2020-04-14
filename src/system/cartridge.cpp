@@ -1,8 +1,9 @@
 #include "includes/cartridge.h"
 #include "includes/constants.h"
+#include <algorithm>
 
-Cartridge::Cartridge(byte* data) {
-    rom = data;
+Cartridge::Cartridge(byte *data) {
+    std::copy(data, data + 0x800000, rom);
     isColor = rom[0x143] == 0x80;
     isSuper = rom[0x146] == 0x03;
     romVersionNumber = rom[0x14C];

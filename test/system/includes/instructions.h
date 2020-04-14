@@ -1,0 +1,300 @@
+#ifndef GOODBOY_TEST_INSTRUCTIONS_H
+#define GOODBOY_TEST_INSTRUCTIONS_H
+
+#include "../../../src/system/includes/gameboy.h"
+#include "../../../src/system/includes/globals.h"
+#include "test.h"
+#include <vector>
+
+class InstructionsTest : public Test {
+public:
+    GameBoy* gb;
+    byte* rom;
+
+    InstructionsTest(GameBoy *gameBoy);
+
+    void beforeAll();
+    void beforeEach();
+    void tearDown();
+
+    void loadRom(std::vector<byte> bytes);
+
+    void test_0x00();
+    void test_0x01();
+    void test_0x02();
+    void test_0x03();
+    void test_0x04();
+    void test_0x04_half();
+    void test_0x04_zero_half();
+    void test_0x05();
+    void test_0x05_zero_sub();
+    void test_0x05_sub_half();
+    void test_0x05_sub_half2();
+    void test_0x06();
+    void test_0x07();
+    void test_0x08();
+    void test_0x09();
+    void test_0x0A();
+    void test_0x0B();
+    void test_0x0C();
+    void test_0x0D();
+    void test_0x0E();
+    void test_0x0F();
+
+    void test_0x10();
+    void test_0x11();
+    void test_0x12();
+    void test_0x13();
+    void test_0x14();
+    void test_0x15();
+    void test_0x16();
+    void test_0x17();
+    void test_0x18();
+    void test_0x19();
+    void test_0x1A();
+    void test_0x1B();
+    void test_0x1C();
+    void test_0x1D();
+    void test_0x1E();
+    void test_0x1F();
+
+    void test_0x20();
+    void test_0x21();
+    void test_0x22();
+    void test_0x23();
+    void test_0x24();
+    void test_0x25();
+    void test_0x26();
+    void test_0x27();
+    void test_0x28();
+    void test_0x29();
+    void test_0x2A();
+    void test_0x2B();
+    void test_0x2C();
+    void test_0x2D();
+    void test_0x2E();
+    void test_0x2F();
+
+    void test_0x30();
+    void test_0x31();
+    void test_0x32();
+    void test_0x33();
+    void test_0x34();
+    void test_0x35();
+    void test_0x36();
+    void test_0x37();
+    void test_0x38();
+    void test_0x39();
+    void test_0x3A();
+    void test_0x3B();
+    void test_0x3C();
+    void test_0x3D();
+    void test_0x3E();
+    void test_0x3F();
+
+    void test_0x40();
+    void test_0x41();
+    void test_0x42();
+    void test_0x43();
+    void test_0x44();
+    void test_0x45();
+    void test_0x46();
+    void test_0x47();
+    void test_0x48();
+    void test_0x49();
+    void test_0x4A();
+    void test_0x4B();
+    void test_0x4C();
+    void test_0x4D();
+    void test_0x4E();
+    void test_0x4F();
+
+    void test_0x50();
+    void test_0x51();
+    void test_0x52();
+    void test_0x53();
+    void test_0x54();
+    void test_0x55();
+    void test_0x56();
+    void test_0x57();
+    void test_0x58();
+    void test_0x59();
+    void test_0x5A();
+    void test_0x5B();
+    void test_0x5C();
+    void test_0x5D();
+    void test_0x5E();
+    void test_0x5F();
+
+    void test_0x60();
+    void test_0x61();
+    void test_0x62();
+    void test_0x63();
+    void test_0x64();
+    void test_0x65();
+    void test_0x66();
+    void test_0x67();
+    void test_0x68();
+    void test_0x69();
+    void test_0x6A();
+    void test_0x6B();
+    void test_0x6C();
+    void test_0x6D();
+    void test_0x6E();
+    void test_0x6F();
+
+    void test_0x70();
+    void test_0x71();
+    void test_0x72();
+    void test_0x73();
+    void test_0x74();
+    void test_0x75();
+    void test_0x76();
+    void test_0x77();
+    void test_0x78();
+    void test_0x79();
+    void test_0x7A();
+    void test_0x7B();
+    void test_0x7C();
+    void test_0x7D();
+    void test_0x7E();
+    void test_0x7F();
+
+    void test_0x80();
+    void test_0x81();
+    void test_0x82();
+    void test_0x83();
+    void test_0x84();
+    void test_0x85();
+    void test_0x86();
+    void test_0x87();
+    void test_0x88();
+    void test_0x89();
+    void test_0x8A();
+    void test_0x8B();
+    void test_0x8C();
+    void test_0x8D();
+    void test_0x8E();
+    void test_0x8F();
+
+    void test_0x90();
+    void test_0x91();
+    void test_0x92();
+    void test_0x93();
+    void test_0x94();
+    void test_0x95();
+    void test_0x96();
+    void test_0x97();
+    void test_0x98();
+    void test_0x99();
+    void test_0x9A();
+    void test_0x9B();
+    void test_0x9C();
+    void test_0x9D();
+    void test_0x9E();
+    void test_0x9F();
+
+    void test_0xA0();
+    void test_0xA1();
+    void test_0xA2();
+    void test_0xA3();
+    void test_0xA4();
+    void test_0xA5();
+    void test_0xA6();
+    void test_0xA7();
+    void test_0xA8();
+    void test_0xA9();
+    void test_0xAA();
+    void test_0xAB();
+    void test_0xAC();
+    void test_0xAD();
+    void test_0xAE();
+    void test_0xAF();
+
+    void test_0xB0();
+    void test_0xB1();
+    void test_0xB2();
+    void test_0xB3();
+    void test_0xB4();
+    void test_0xB5();
+    void test_0xB6();
+    void test_0xB7();
+    void test_0xB8();
+    void test_0xB9();
+    void test_0xBA();
+    void test_0xBB();
+    void test_0xBC();
+    void test_0xBD();
+    void test_0xBE();
+    void test_0xBF();
+
+    void test_0xC0();
+    void test_0xC1();
+    void test_0xC2();
+    void test_0xC3();
+    void test_0xC4();
+    void test_0xC5();
+    void test_0xC6();
+    void test_0xC7();
+    void test_0xC8();
+    void test_0xC9();
+    void test_0xCA();
+    void test_0xCB();
+    void test_0xCC();
+    void test_0xCD();
+    void test_0xCE();
+    void test_0xCF();
+
+    void test_0xD0();
+    void test_0xD1();
+    void test_0xD2();
+    void test_0xD3();
+    void test_0xD4();
+    void test_0xD5();
+    void test_0xD6();
+    void test_0xD7();
+    void test_0xD8();
+    void test_0xD9();
+    void test_0xDA();
+    void test_0xDB();
+    void test_0xDC();
+    void test_0xDD();
+    void test_0xDE();
+    void test_0xDF();
+
+    void test_0xE0();
+    void test_0xE1();
+    void test_0xE2();
+    void test_0xE3();
+    void test_0xE4();
+    void test_0xE5();
+    void test_0xE6();
+    void test_0xE7();
+    void test_0xE8();
+    void test_0xE9();
+    void test_0xEA();
+    void test_0xEB();
+    void test_0xEC();
+    void test_0xED();
+    void test_0xEE();
+    void test_0xEF();
+
+    void test_0xF0();
+    void test_0xF1();
+    void test_0xF2();
+    void test_0xF3();
+    void test_0xF4();
+    void test_0xF5();
+    void test_0xF6();
+    void test_0xF7();
+    void test_0xF8();
+    void test_0xF9();
+    void test_0xFA();
+    void test_0xFB();
+    void test_0xFC();
+    void test_0xFD();
+    void test_0xFE();
+    void test_0xFF();
+};
+
+#endif

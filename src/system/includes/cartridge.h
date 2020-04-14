@@ -20,7 +20,7 @@ public:
     bool isColor;
     bool isSuper;
 
-    Cartridge(byte* data);
+    Cartridge(byte *data);
     ~Cartridge();
 
     void parseTitle();

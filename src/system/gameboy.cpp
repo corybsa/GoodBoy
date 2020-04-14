@@ -14,12 +14,14 @@ GameBoy::GameBoy() {
 }
 
 GameBoy::~GameBoy() {
+    delete cartridge;
     delete memory;
     delete timers;
     delete lcd;
     delete gpu;
     delete cpu;
 
+    cartridge = NULL;
     memory = NULL;
     timers = NULL;
     lcd = NULL;
@@ -35,7 +37,7 @@ void GameBoy::reset() {
 void GameBoy::loadRom(byte* rom) {
     reset();
     cartridge = new Cartridge(rom);
-    memory->loadRom(rom);
+    memory->loadRom(cartridge->rom);
     isCartLoaded = true;
     cartChanged = true;
 }

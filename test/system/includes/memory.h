@@ -13,6 +13,7 @@ public:
 
     void beforeAll();
     void beforeEach();
+    void tearDown();
 
     void romRange();
     void vramRange();
