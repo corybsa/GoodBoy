@@ -45,6 +45,10 @@
             "label": "make test",
             "type": "shell",
             "command": "make test && ./build/test/app/goodboy",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
             "problemMatcher": {
               "owner": "cpp",
               "fileLocation": ["relative", "${workspaceFolder}"],

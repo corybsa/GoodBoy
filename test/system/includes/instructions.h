@@ -75,15 +75,24 @@ public:
     void test_0x1D_half2();
     void test_0x1E();
     void test_0x1F();
+    void test_0x1F_with_carry();
 
     void test_0x20();
+    void test_0x20_backwards();
+    void test_0x20_no_jump();
     void test_0x21();
     void test_0x22();
     void test_0x23();
     void test_0x24();
+    void test_0x24_half();
+    void test_0x24_zero_half();
     void test_0x25();
+    void test_0x25_zero_sub();
+    void test_0x25_sub_half();
+    void test_0x25_sub_half2();
     void test_0x26();
     void test_0x27();
+    void test_0x27_after_sub();
     void test_0x28();
     void test_0x29();
     void test_0x2A();

@@ -476,7 +476,8 @@ void CPU::doMiscOperation(int y, int z, int q, int p) {
 
                     break;
                 case 0b001: // ld (xx), sp
-                    writeByte(getWord(), registers.SP);
+                    writeByte(getWord(), registers.SP & 0xFF);
+                    writeByte(getWord() + 1, registers.SP >> 8);
                     incrementCycles(20);
                     registers.PC += 2;
 
@@ -536,11 +537,11 @@ void CPU::doMiscOperation(int y, int z, int q, int p) {
 
             break;
         case 0b001: // 16-bit immediate load/add
-            if(q == 0) {
+            if(q == 0) { // add [bc, de, hl, sp], [bc, de, hl, sp]
                 registers.set16Bit(p, getWord(), false);
                 incrementCycles(12);
                 registers.PC += 2;
-            } else {
+            } else { // add hl, [bc, de, hl, sp]
                 registers.HL = add16Bit(registers.HL, registers.get16Bit(p, false));
                 incrementCycles(8);
             }
@@ -1218,6 +1219,7 @@ byte CPU::increment(byte value) {
 
 /**
  * Decrements a value by 1 and sets the necessary flags.
+ * See resources/half-carry-math.txt for explanation
  */
 byte CPU::decrement(byte value) {
     // decrement value by 1 and get the first 8 bits
@@ -1259,9 +1261,9 @@ word CPU::add16Bit(word num1, word num2) {
     }
 
     if(((num1 & 0x0F00) + (num2 & 0x0F00)) > 0x0F00) {
-        setFlags(CARRY);
+        setFlags(HALF);
     } else {
-        resetFlags(CARRY);
+        resetFlags(HALF);
     }
 
     resetFlags(SUB);
