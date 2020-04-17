@@ -14,90 +14,90 @@ int main(int argc, char* args[]) {
     DebugWindow debugWindow(gb);
     bool success = true;
 
-    if(SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-        printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
-        success = false;
-    } else {
-        if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
-            printf("Warning: Linear texture filtering not enabled!");
-        }
+    // if(SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+    //     printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
+    //     success = false;
+    // } else {
+    //     if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
+    //         printf("Warning: Linear texture filtering not enabled!");
+    //     }
 
-        if(!mainWindow.init("GoodBoy", LCD_WIDTH * 2, LCD_HEIGHT * 2)) {
-            printf("Main window could not be created!\n");
-            success = false;
-        }
-    }
+    //     if(!mainWindow.init("GoodBoy", LCD_WIDTH * 2, LCD_HEIGHT * 2)) {
+    //         printf("Main window could not be created!\n");
+    //         success = false;
+    //     }
+    // }
 
-    if(!success) {
-        printf("Failed to initialize!");
-    } else {
-        bool quit = false;
-        SDL_Event e;
+    // if(!success) {
+    //     printf("Failed to initialize!");
+    // } else {
+    //     bool quit = false;
+    //     SDL_Event e;
 
-        while(!quit) {
+    //     while(!quit) {
 
-            // handle events on queue
-            while(SDL_PollEvent(&e) != 0) {
+    //         // handle events on queue
+    //         while(SDL_PollEvent(&e) != 0) {
 
-                // user requests quit
-                if(e.type == SDL_QUIT) {
-                    quit = true;
-                    break;
-                }
+    //             // user requests quit
+    //             if(e.type == SDL_QUIT) {
+    //                 quit = true;
+    //                 break;
+    //             }
 
-                mainWindow.handleEvent(e);
-                debugWindow.handleEvent(e);
+    //             mainWindow.handleEvent(e);
+    //             debugWindow.handleEvent(e);
 
-                if(e.type == SDL_KEYDOWN) {
-                    switch(e.key.keysym.sym) {
-                        case SDLK_q:
-                            if(mainWindow.isKeyboardFocused) {
-                                quit = true;
-                            }
+    //             if(e.type == SDL_KEYDOWN) {
+    //                 switch(e.key.keysym.sym) {
+    //                     case SDLK_q:
+    //                         if(mainWindow.isKeyboardFocused) {
+    //                             quit = true;
+    //                         }
 
-                            // TODO: remove this when the debugger is done
-                            quit = true;
+    //                         // TODO: remove this when the debugger is done
+    //                         quit = true;
 
-                            break;
-                        case SDLK_b:
-                            debugWindow.askForBreakpoint();
+    //                         break;
+    //                     case SDLK_b:
+    //                         debugWindow.askForBreakpoint();
 
-                            break;
-                        case SDLK_F12:
-                            if(debugWindow.window == NULL) {
-                                if(!debugWindow.init("Debugger", 600, 480)) {
-                                    printf("Debug window could not be created!\n");
-                                    quit = true;
-                                }
-                            }
+    //                         break;
+    //                     case SDLK_F12:
+    //                         if(debugWindow.window == NULL) {
+    //                             if(!debugWindow.init("Debugger", 600, 480)) {
+    //                                 printf("Debug window could not be created!\n");
+    //                                 quit = true;
+    //                             }
+    //                         }
 
-                            break;
-                    }
-                }
-            }
+    //                         break;
+    //                 }
+    //             }
+    //         }
 
-            // update windows
-            mainWindow.render();
+    //         // update windows
+    //         mainWindow.render();
 
-            if(debugWindow.window != NULL) {
-                debugWindow.render();
-            }
+    //         if(debugWindow.window != NULL) {
+    //             debugWindow.render();
+    //         }
 
-            // check windows
-            bool allWindowsClosed = !mainWindow.isShown && !debugWindow.isShown;
+    //         // check windows
+    //         bool allWindowsClosed = !mainWindow.isShown && !debugWindow.isShown;
             
-            if(allWindowsClosed) {
-                quit = true;
-            }
-        }
-    }
+    //         if(allWindowsClosed) {
+    //             quit = true;
+    //         }
+    //     }
+    // }
 
     // byte* rom = openFile("./resources/roms/tests/mooneye/acceptance/instr/daa.gb");
     byte* rom = openFile("./resources/roms/tests/blargg/cpu_instrs/cpu_instrs.gb");
 
     gb->loadRom(rom);
     std::cout << gb->cartridge->toString();
-    // gb->run();
+    gb->run();
     
     // gb->loadRom(rom);
     // printf("%s", gb->cartridge->toString());
