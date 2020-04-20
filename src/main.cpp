@@ -10,6 +10,10 @@ byte* openFile(char* name);
 
 int main(int argc, char* args[]) {
     GameBoy* gb = new GameBoy();
+    byte* rom = openFile("./resources/roms/tests/mooneye/acceptance/instr/daa.gb");
+    gb->loadRom(rom);
+    std::cout << gb->cartridge->toString();
+
     Window mainWindow;
     DebugWindow debugWindow(gb);
     bool success = true;
@@ -26,6 +30,8 @@ int main(int argc, char* args[]) {
             printf("Main window could not be created!\n");
             success = false;
         }
+
+        debugWindow.init("Debugger", 600, 480);
     }
 
     if(!success) {
@@ -35,6 +41,7 @@ int main(int argc, char* args[]) {
         SDL_Event e;
 
         while(!quit) {
+            gb->tick();
 
             // handle events on queue
             while(SDL_PollEvent(&e) != 0) {
@@ -92,11 +99,6 @@ int main(int argc, char* args[]) {
         }
     }
 
-    // byte* rom = openFile("./resources/roms/tests/mooneye/acceptance/instr/daa.gb");
-    byte* rom = openFile("./resources/roms/tests/blargg/cpu_instrs/cpu_instrs.gb");
-
-    gb->loadRom(rom);
-    std::cout << gb->cartridge->toString();
     // gb->run();
     
     // gb->loadRom(rom);

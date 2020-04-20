@@ -27,6 +27,7 @@ public:
     void reset();
     void loadRom(byte* rom);
     void run();
+    void tick();
 };
 
 #endif

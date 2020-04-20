@@ -1,5 +1,6 @@
 #include "includes/gpu.h"
 #include "includes/globals.h"
+#include <chrono>
 
 GPU::GPU(Memory* memory, LCD* lcd) {
     this->memory = memory;
@@ -44,6 +45,11 @@ void GPU::tick(unsigned long cycles) {
                     scanline = 0;
                     changeMode(GPU_MODE_OAM);
                 }
+
+                // calculate frame rate
+                unsigned long long nanoseconds = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+                frameRate = 1000000 / ((double)nanoseconds - (double)lastFrameTime);
+                lastFrameTime = nanoseconds;
 
                 ticks -= GPU_TIMING_VBLANK;
                 memory->writeIO(IO_LY_COORDINATE, scanline);

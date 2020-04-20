@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "preLaunchTask": "make debug",
-            "program": "${workspaceFolder}/build/apps/goodboy",
+            "program": "${workspaceFolder}/build/app/goodboy",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

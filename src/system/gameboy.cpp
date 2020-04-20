@@ -50,3 +50,7 @@ void GameBoy::run() {
 
     cpu->run();
 }
+
+void GameBoy::tick() {
+    cpu->tick();
+}

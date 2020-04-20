@@ -18,6 +18,8 @@ public:
     unsigned long previousCycles = 0;
     byte tiles[384][8][8] = {};
     byte backgroundMap[BG_HEIGHT][BG_WIDTH][8] = {};
+    double frameRate = 0;
+    unsigned long long lastFrameTime = 0;
 
     GPU(Memory* memory, LCD* lcd);
 

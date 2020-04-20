@@ -21,6 +21,7 @@ public:
     char* wordToHex(char* info, word value);
     char* byteToHex(char* info, byte value);
     char* boolToHex(char* info, bool value);
+    char* doubleToString(char* info, double value);
 };
 
 #endif

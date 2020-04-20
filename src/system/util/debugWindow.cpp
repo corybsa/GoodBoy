@@ -2,6 +2,8 @@
 #include "includes/texture.h"
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <stdlib.h>
 
 DebugWindow::DebugWindow(GameBoy* gameBoy) {
     gb = gameBoy;
@@ -44,17 +46,6 @@ void DebugWindow::render() {
         SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(renderer);
 
-        /*
-        
-        this.interruptFlags = new Label("IF: 0x00");
-        this.interruptEnable = new Label("IE: 0x00");
-        this.ime = new Label("IME: off");
-        this.lcdc = new Label("LCDC: 0x00");
-        this.ly = new Label("LY: 0x00");
-        this.lcdStat = new Label("STAT: 0x00");
-
-        */
-
         texture->renderText(wordToHex("AF: ", gb->cpu->registers.AF), 5, 5);
         texture->renderText(wordToHex("BC: ", gb->cpu->registers.BC), 5, 25);
         texture->renderText(wordToHex("DE: ", gb->cpu->registers.DE), 5, 45);
@@ -68,6 +59,8 @@ void DebugWindow::render() {
         texture->renderText(byteToHex("LCDC: ", gb->memory->readIO(IO_LCDC)), 120, 65);
         texture->renderText(byteToHex("LY: ", gb->memory->readIO(IO_LY_COORDINATE)), 120, 85);
         texture->renderText(byteToHex("STAT: ", gb->memory->readIO(IO_LCD_STATUS)), 120, 105);
+
+        texture->renderText(doubleToString("FPS: ", gb->gpu->frameRate), 200, 200);
 
         texture->renderText("Add breakpoint: B", 5, 440);
         texture->renderText("Add memory watch: M", 5, 460);
@@ -114,13 +107,21 @@ char* DebugWindow::byteToHex(char* info, byte value) {
 }
 
 char* DebugWindow::boolToHex(char* info, bool value) {
-    int len = sizeof(info) + sizeof(value);
-    char* chars = new char[len + 1];
-    chars[len + 1] = (value ? '1' : '0');
+    int length = strlen(info) + 1;
+    char* chars = new char[length];
+    std::string s(info);
+    s += (value ? '1' : '0');
+    strncpy(chars, s.c_str(), length);
+    
+    return chars;
+}
 
-    printf("before: %s\n", chars);
+char* DebugWindow::doubleToString(char* info, double value) {
+    std::string s(std::to_string(value));
+    int length = strlen(info) + strlen(s.c_str());
+    char* chars = new char[length];
+    s = std::string(info) + s;
+    strncpy(chars, s.c_str(), length);
 
-    strncpy(chars, info, sizeof(info));
-    printf("after: %s\n", chars);
     return chars;
 }
