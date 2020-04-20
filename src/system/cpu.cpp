@@ -88,7 +88,7 @@ byte CPU::readByte(int address) {
 }
 
 void CPU::tick() {
-    synchronize();
+    // synchronize();
 
     bool effectiveIme = ime;
 
