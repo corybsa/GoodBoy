@@ -103,7 +103,7 @@ int main(int argc, char* args[]) {
         gameThread.join();
     }
     
-    delete rom;
+    delete[] rom;
     rom = NULL;
 
     delete gb;

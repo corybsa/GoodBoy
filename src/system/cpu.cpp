@@ -1,5 +1,6 @@
 #include <chrono>
 #include <thread>
+#include <iostream>
 #include "includes/cpu.h"
 #include "includes/memory.h"
 #include "includes/globals.h"
@@ -88,7 +89,7 @@ byte CPU::readByte(int address) {
 }
 
 void CPU::tick() {
-    // synchronize();
+    synchronize();
 
     bool effectiveIme = ime;
 
@@ -141,40 +142,29 @@ void CPU::resetFlags(int flags) {
  * Keeps the CPU from running as fast as it can. This will keep the frame rate at 60 fps.
  */
 void CPU::synchronize() {
-    /* OLD IMPLEMENTATION
-
-    // only sleep after ticking 1000 cycles
-    // TODO: is this a good idea?
-    if(cyclesSinceLastSync < 1000) {
+    // don't sync if not enough time passed
+    if(cyclesSinceLastSync < LCDC_PERIOD / 3) {
         return;
     }
 
     // our target sleep time is the length in time the previous instruction took.
-    unsigned long long target = (cyclesSinceLastSync * 1000000000ULL) / CPU_FREQUENCY;
+    unsigned long long target = (cyclesSinceLastSync * 1000000000LL) / CPU_FREQUENCY;
 
     // get the current nanoseconds
-    unsigned long long nanoseconds = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    unsigned long long nanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     // The sleep duration is the previous instruction time plus how long it's been since we last synced.
     // We subtract the nanoseconds to see if the CPU is running too fast.
     // If sleepDuration is positive that means that the CPU is running incredibly fast (for GameBoy standards, anyway),
     //   and we need to slow it down by sleeping.
-    unsigned long long sleepDuration = target + nanoseconds - lastSyncTime;
-
-    // TODO: Does this happend in C++?
-    // There's a weird lag during vblank, so we can disable sleep during vblank
-    //   and just process everything as fast as possible to mitigate the lag.
-    // This is probably not the best solution, but it works.
-    if(gpu->mode == GPU_MODE_VBLANK) {
-        sleepDuration = 0;
-    }
+    unsigned long long sleepDuration = target + lastSyncTime - nanoseconds;
 
     // check if sleepDuration is between zero and the time it takes to complete a whole frame.
-    if(sleepDuration > 0 && sleepDuration < ((LCDC_PERIOD * 1000000000ULL) / CPU_FREQUENCY)) {
+    if(sleepDuration > 0 && sleepDuration < VBLANK_PERIOD) {
         sleep(sleepDuration);
 
         // need to keep track of how long it's been since we last synced.
-        lastSyncTime += target;
+        lastSyncTime = nanoseconds + sleepDuration;
     } else {
         // we need to know when we last synced.
         lastSyncTime = nanoseconds;
@@ -183,21 +173,6 @@ void CPU::synchronize() {
     // We only care about the previous instruction, so we can set this to zero and it will be updated
     // after the next instruction is executed.
     cyclesSinceLastSync = 0;
-    */
-    
-    // check how long it took for a full frame. vblank to vblank
-    if(gpu->mode == GPU_MODE_VBLANK) {
-        unsigned long long vblankPeriod = (LCDC_PERIOD * 1000LL) / CPU_FREQUENCY;
-        unsigned long long nanoseconds = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-        unsigned long long sleepDuration = vblankPeriod - (nanoseconds - lastSyncTime);
-
-        if(sleepDuration > 0 && sleepDuration < vblankPeriod) {
-            sleep(sleepDuration);
-        }
-
-        lastSyncTime = nanoseconds;
-        cyclesSinceLastSync = 0;
-    }
 }
 
 /**

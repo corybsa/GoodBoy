@@ -46,8 +46,9 @@ void GPU::tick(unsigned long cycles) {
                     changeMode(GPU_MODE_OAM);
 
                     // calculate frame rate
-                    unsigned long long nanoseconds = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-                    frameRate = 1000000 / ((double)nanoseconds - (double)lastFrameTime);
+                    unsigned long long nanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+                    frameRate = 1000000000LL / (nanoseconds - lastFrameTime);
+                    printf("%f\n", ((double)nanoseconds - (double)lastFrameTime) / 1000000);
                     lastFrameTime = nanoseconds;
                     ++frameCount;
                 }

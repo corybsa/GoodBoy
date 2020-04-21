@@ -2,6 +2,7 @@
 #include "includes/texture.h"
 #include <iostream>
 #include <string>
+#include <sstream>
 
 DebugWindow::DebugWindow(GameBoy* gameBoy) {
     gb = gameBoy;
@@ -58,9 +59,9 @@ void DebugWindow::render() {
         texture->renderText(byteToHex("LY: ", gb->memory->readIO(IO_LY_COORDINATE)), 120, 85);
         texture->renderText(byteToHex("STAT: ", gb->memory->readIO(IO_LCD_STATUS)), 120, 105);
 
-        texture->renderText(doubleToString("FPS: ", gb->gpu->frameRate), 200, 200);
-        texture->renderText(wordToHex("Frame Count: ", gb->gpu->frameCount), 200, 225);
-        texture->renderText(byteToHex("GPU Mode: ", gb->gpu->mode), 200, 250);
+        texture->renderText(intToString("FPS: ", gb->gpu->frameRate), 200, 200);
+        texture->renderText(intToString("Frame Count: ", gb->gpu->frameCount), 200, 225);
+        texture->renderText(intToString("GPU Mode: ", gb->gpu->mode), 200, 250);
 
         texture->renderText("Add breakpoint: B", 5, 440);
         texture->renderText("Add memory watch: M", 5, 460);
@@ -107,23 +108,21 @@ char* DebugWindow::byteToHex(char* info, byte value) {
 }
 
 char* DebugWindow::boolToHex(char* info, bool value) {
-    int len = sizeof(info) + sizeof(value);
-    char* chars = new char[len + 1];
-    chars[len + 1] = (value ? '1' : '0');
-
-    printf("before: %s\n", chars);
-
-    strncpy(chars, info, sizeof(info));
-    printf("after: %s\n", chars);
+    int length = strlen(info) + 1;
+    char* chars = new char[length];
+    std::string s(info);
+    s += (value ? '1' : '0');
+    strncpy(chars, s.c_str(), length);
+    
     return chars;
 }
 
-char* DebugWindow::doubleToString(char* info, double value) {
-    std::string s(std::to_string(value));
-    int length = strlen(info) + strlen(s.c_str());
+char* DebugWindow::intToString(char* info, int value) {
+    std::string s(info);
+    s += std::to_string(value);
+    int length = strlen(s.c_str());
     char* chars = new char[length];
-    s = std::string(info) + s;
-    strncpy(chars, s.c_str(), length);
+    strncpy(chars, s.c_str(), length + 1);
 
     return chars;
 }

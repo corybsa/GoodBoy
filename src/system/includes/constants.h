@@ -42,6 +42,7 @@ static const int LCD_HEIGHT = 144;
 static const int LCD_WIDTH = 160;
 static const int BG_HEIGHT = 256;
 static const int BG_WIDTH = 256;
+static const unsigned long long VBLANK_PERIOD = LCDC_PERIOD * 1000000000LL / CPU_FREQUENCY;
 
 // pixel info
 static const int PIXEL_WHITE = 0;
