@@ -131,7 +131,6 @@ public:
 
     void reset();
     void tick();
-    void run();
     void setFlags(int flags);
     void resetFlags(int flags);
 };

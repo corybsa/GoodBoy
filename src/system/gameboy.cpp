@@ -39,14 +39,25 @@ void GameBoy::loadRom(byte* rom) {
     cartridge = new Cartridge(rom);
     memory->loadRom(cartridge->rom);
     isCartLoaded = true;
-    cartChanged = true;
+    isCartChanged = true;
 }
 
 void GameBoy::run() {
-    if(cartChanged) {
-        reset();
-        cartChanged = false;
-    }
+    while(isRunning) {
+        if(isCartChanged) {
+            reset();
+            isCartChanged = false;
+        }
 
-    cpu->run();
+        cpu->tick();
+        gpu->tick(cpu->cycles);
+    }
+}
+
+void GameBoy::tick() {
+    cpu->tick();
+}
+
+void GameBoy::quit() {
+    isRunning = false;
 }

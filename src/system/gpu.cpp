@@ -44,11 +44,12 @@ void GPU::tick(unsigned long cycles) {
                 if(scanline > VBLANK_END) {
                     scanline = 0;
                     changeMode(GPU_MODE_OAM);
-                    
+
                     // calculate frame rate
                     unsigned long long nanoseconds = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-                    printf("%f fps\n", 1000000 / ((double)nanoseconds - (double)lastFrameTime));
+                    frameRate = 1000000 / ((double)nanoseconds - (double)lastFrameTime);
                     lastFrameTime = nanoseconds;
+                    ++frameCount;
                 }
 
                 ticks -= GPU_TIMING_VBLANK;

@@ -118,15 +118,6 @@ void CPU::tick() {
         checkInterrupts();
     } else {
         decode(readByte(registers.PC++));
-        gpu->tick(cycles);
-    }
-}
-
-void CPU::run() {
-    isRunning = true;
-
-    while(isRunning) {
-        tick();
     }
 }
 
@@ -150,6 +141,8 @@ void CPU::resetFlags(int flags) {
  * Keeps the CPU from running as fast as it can. This will keep the frame rate at 60 fps.
  */
 void CPU::synchronize() {
+    /* OLD IMPLEMENTATION
+
     // only sleep after ticking 1000 cycles
     // TODO: is this a good idea?
     if(cyclesSinceLastSync < 1000) {
@@ -168,13 +161,13 @@ void CPU::synchronize() {
     //   and we need to slow it down by sleeping.
     unsigned long long sleepDuration = target + nanoseconds - lastSyncTime;
 
-// TODO: Does this happend in C++?
+    // TODO: Does this happend in C++?
     // There's a weird lag during vblank, so we can disable sleep during vblank
     //   and just process everything as fast as possible to mitigate the lag.
     // This is probably not the best solution, but it works.
-    // if(this.gpu.getMode() == GPU.Mode.VBLANK) {
-    //     sleepDuration = 0;
-    // }
+    if(gpu->mode == GPU_MODE_VBLANK) {
+        sleepDuration = 0;
+    }
 
     // check if sleepDuration is between zero and the time it takes to complete a whole frame.
     if(sleepDuration > 0 && sleepDuration < ((LCDC_PERIOD * 1000000000ULL) / CPU_FREQUENCY)) {
@@ -190,6 +183,21 @@ void CPU::synchronize() {
     // We only care about the previous instruction, so we can set this to zero and it will be updated
     // after the next instruction is executed.
     cyclesSinceLastSync = 0;
+    */
+    
+    // check how long it took for a full frame. vblank to vblank
+    if(gpu->mode == GPU_MODE_VBLANK) {
+        unsigned long long vblankPeriod = (LCDC_PERIOD * 1000LL) / CPU_FREQUENCY;
+        unsigned long long nanoseconds = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+        unsigned long long sleepDuration = vblankPeriod - (nanoseconds - lastSyncTime);
+
+        if(sleepDuration > 0 && sleepDuration < vblankPeriod) {
+            sleep(sleepDuration);
+        }
+
+        lastSyncTime = nanoseconds;
+        cyclesSinceLastSync = 0;
+    }
 }
 
 /**
