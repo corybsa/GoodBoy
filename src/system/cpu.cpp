@@ -75,10 +75,9 @@ void CPU::reset() {
 
 /*
     TODO:
-        During mode 0 and mode 1 the CPU can access both VRAM and OAM. During mode 2 the CPU
-        can only access VRAM, not OAM. During mode 3 OAM and VRAM can't be accessed. In GBC
-        mode the CPU can't access Palette RAM (FF69h and FF6Bh) during mode 3.
-
+        During mode 0 and mode 1 the CPU can access both VRAM and OAM.
+        During mode 2 the CPU can only access VRAM, not OAM.
+        During mode 3 OAM and VRAM can't be accessed.
 */
 void CPU::writeByte(int address, int value) {
     memory->writeByte(address, value);
@@ -310,30 +309,26 @@ void CPU::decode(byte opCode) {
         haltBug = false;
     }
 
-    // if(opCode != 0xCB) {
-        int x = opCode >> 6;
-        int y = (opCode & 0b00111000) >> 3;
-        int z = opCode & 0b00000111;
-        int p = y >> 1;
-        int q = y % 2;
+    int x = opCode >> 6;
+    int y = (opCode & 0b00111000) >> 3;
+    int z = opCode & 0b00000111;
+    int p = y >> 1;
+    int q = y % 2;
 
-        switch(x) {
-            case 0b00:
-                doMiscOperation(y, z, q , p);
-                break;
-            case 0b01:
-                doLoadOperation(y, z);
-                break;
-            case 0b10:
-                doMathOperation(y, z);
-                break;
-            case 0b11:
-                doJumpOperation(y, z, q, p);
-                break;
-        }
-    // } else {
-    //     decodeCB(readByte(registers.PC++));
-    // }
+    switch(x) {
+        case 0b00:
+            doMiscOperation(y, z, q , p);
+            break;
+        case 0b01:
+            doLoadOperation(y, z);
+            break;
+        case 0b10:
+            doMathOperation(y, z);
+            break;
+        case 0b11:
+            doJumpOperation(y, z, q, p);
+            break;
+    }
 }
 
 /**
@@ -611,7 +606,7 @@ void CPU::doMiscOperation(int y, int z, int q, int p) {
         case 0b110: // load immediate 8-bit
             if(y == 0b110) { // ld (hl), x
                 writeByte(registers.HL, getByte());
-            } else {
+            } else { // ld [b, c, d, e, h, l, a], x
                 registers.set8Bit(y, getByte());
             }
 

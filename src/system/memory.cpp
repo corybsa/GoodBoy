@@ -5,42 +5,13 @@
 Memory::Memory() {
     cartridge = new byte[0x800000];
     ram = new byte[0x8000];
-    // vram = new byte[0x2000];
-    // sram = new byte[0x8000];
-    // wram = new byte[0x2000];
-    // eram = new byte[0x1E00];
-    // oam = new byte[0xA0];
-    // fea0_feff = new byte[0x60];
-    // io = new byte[0x80];
-    // hram = new byte[0x7F];
-    // ie = new byte[0x01];
 }
 
 Memory::~Memory() {
-    // delete[] cartridge;
-    // delete[] vram;
-    // delete[] sram;
-    // delete[] wram;
-    // delete[] eram;
-    // delete[] oam;
-    // delete[] fea0_feff;
-    // delete[] io;
-    // delete[] hram;
-    // delete[] ie;
-
     delete[] ram;
 
     cartridge = NULL;
     ram = NULL;
-    // vram = NULL;
-    // sram = NULL;
-    // wram = NULL;
-    // eram = NULL;
-    // oam = NULL;
-    // fea0_feff = NULL;
-    // io = NULL;
-    // hram = NULL;
-    // ie = NULL;
 }
 
 void Memory::setGpuCallback(std::function<void(word, byte, byte)> callback) {
