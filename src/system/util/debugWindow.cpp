@@ -3,7 +3,6 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-#include <stdlib.h>
 
 DebugWindow::DebugWindow(GameBoy* gameBoy) {
     gb = gameBoy;
@@ -60,7 +59,9 @@ void DebugWindow::render() {
         texture->renderText(byteToHex("LY: ", gb->memory->readIO(IO_LY_COORDINATE)), 120, 85);
         texture->renderText(byteToHex("STAT: ", gb->memory->readIO(IO_LCD_STATUS)), 120, 105);
 
-        texture->renderText(doubleToString("FPS: ", gb->gpu->frameRate), 200, 200);
+        texture->renderText(floatToString("FPS: ", gb->gpu->frameRate), 200, 200);
+        texture->renderText(intToString("Frame Count: ", gb->gpu->frameCount), 200, 225);
+        texture->renderText(intToString("GPU Mode: ", gb->gpu->mode), 200, 250);
 
         texture->renderText("Add breakpoint: B", 5, 440);
         texture->renderText("Add memory watch: M", 5, 460);
@@ -116,12 +117,22 @@ char* DebugWindow::boolToHex(char* info, bool value) {
     return chars;
 }
 
-char* DebugWindow::doubleToString(char* info, double value) {
-    std::string s(std::to_string(value));
-    int length = strlen(info) + strlen(s.c_str());
+char* DebugWindow::intToString(char* info, int value) {
+    std::string s(info);
+    s += std::to_string(value);
+    int length = strlen(s.c_str());
     char* chars = new char[length];
-    s = std::string(info) + s;
-    strncpy(chars, s.c_str(), length);
+    strncpy(chars, s.c_str(), length + 1);
+
+    return chars;
+}
+
+char* DebugWindow::floatToString(char* info, float value) {
+    std::string s(info);
+    s += std::to_string(value).substr(0, 5);
+    int length = strlen(s.c_str());
+    char* chars = new char[length];
+    strncpy(chars, s.c_str(), length + 1);
 
     return chars;
 }

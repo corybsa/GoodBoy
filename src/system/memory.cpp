@@ -4,39 +4,14 @@
 
 Memory::Memory() {
     cartridge = new byte[0x800000];
-    vram = new byte[0x2000];
-    sram = new byte[0x8000];
-    wram = new byte[0x2000];
-    eram = new byte[0x1E00];
-    oam = new byte[0xA0];
-    fea0_feff = new byte[0x60];
-    io = new byte[0x80];
-    hram = new byte[0x7F];
-    ie = new byte[0x01];
+    ram = new byte[0x8000];
 }
 
 Memory::~Memory() {
-    // delete[] cartridge;
-    delete[] vram;
-    delete[] sram;
-    delete[] wram;
-    delete[] eram;
-    delete[] oam;
-    delete[] fea0_feff;
-    delete[] io;
-    delete[] hram;
-    delete[] ie;
+    delete[] ram;
 
     cartridge = NULL;
-    vram = NULL;
-    sram = NULL;
-    wram = NULL;
-    eram = NULL;
-    oam = NULL;
-    fea0_feff = NULL;
-    io = NULL;
-    hram = NULL;
-    ie = NULL;
+    ram = NULL;
 }
 
 void Memory::setGpuCallback(std::function<void(word, byte, byte)> callback) {
@@ -51,32 +26,23 @@ byte Memory::readByte(word address) {
     } else if(address <= 0x7FFF) {
         addr = (address - 0x4000) + (currentRomBank * 0x4000);
         return cartridge[addr];
-    } else if(address <= 0x9FFF) {
-        addr = 0x1FFF - (0x9FFF - address);
-        return vram[addr];
-    } else if(address <= 0xBFFF) {
-        addr = (0x1FFF - (0xBFFF - address)) + (currentRamBank * 0x2000);
-        return sram[addr];
-    } else if(address <= 0xDFFF) {
-        addr = 0x1FFF - (0xDFFF - address);
-        return wram[addr];
-    } else if(address <= 0xFDFF) {
-        addr = 0x1DFF - (0xFDFF - address);
-        return eram[addr];
-    } else if(address <= 0xFE9F) {
-        addr = 0x9F - (0xFE9F - address);
-        return oam[addr];
-    } else if(address <= 0xFEFF) {
-        // reading from this area on DMG always returns 0
-        return 0x00;
-    } else if(address <= 0xFF7F) {
+    } else if(address >= 0xA000 && address <= 0xBFFF) {
+        addr = 0x1FFF - (0xBFFF - address);
+
+        if(isRamBankEnabled) {
+            addr = (addr - 0x1FFF) + (currentRamBank * 0x2000);
+        }
+
+        if(addr > 0x1FFF) {
+            return cartridge[addr];
+        }
+    } else if(address >= 0xFEA0 && address <= 0xFEFF) {
+        return 0;
+    } else if(address >= 0xFF00 && address <= 0xFF7F) {
         return readIO(address);
-    } else if(address <= 0xFFFE) {
-        addr = 0x7E - (0xFFFE - address);
-        return hram[addr];
-    } else {
-        return ie[0];
     }
+
+    return ram[address];
 }
 
 void Memory::writeByte(word address, byte value) {
@@ -86,52 +52,47 @@ void Memory::writeByte(word address, byte value) {
         writeBank(address, value);
     } else if(address <= 0x9FFF) {
         addr = 0x1FFF - (0x9FFF - address);
-        vram[addr] = value;
+        ram[address] = value;
 
-        word index = addr & 0xFFFE;
-        byte byte1 = vram[addr];
-        byte byte2 = vram[addr + 1];
+        byte byte1 = ram[addr];
+        byte byte2 = ram[addr + 1];
         gpuCallback(addr, byte1, byte2);
     } else if(address <= 0xBFFF) {
+        // TODO: make sure this is right
         addr = 0x1FFF - (0xBFFF - address);
 
         if(isRamBankEnabled) {
             addr = (addr - 0x1FFF) + (currentRamBank * 0x2000);
         }
 
-        sram[addr] = value;
+        if(addr > 0x1FFF) {
+            cartridge[addr] = value;
+        } else {
+            ram[address] = value;
+        }
     } else if(address <= 0xDFFF) {
         addr = 0x1FFF - (0xDFFF - address);
-        wram[addr] = value;
+        ram[address] = value;
 
         // writes to this area are copied to eram
         if(addr < 0x1E00) {
-            eram[addr] = value;
+            ram[address + 0x1000] = value;
         }
-    } else if(address <= 0xFDFF) {
-        addr = 0x1DFF - (0xFDFF - address);
-
+    } else if(address >= 0xE000 && address <= 0xFDFF) {
         // writes to this area are redirected to 0xC000 through 0xDDFF (wram & eram)
-        wram[addr] = value;
-        eram[addr] = value;
-    } else if(address <= 0xFE9F) {
-        addr = 0x9F - (0xFE9F - address);
-        oam[addr] = value;
-    } else if(address <= 0xFEFF) {
+        ram[address] = value;
+        ram[address - 0x2000] = value;
+    } else if(address >= 0xFEA0 && address <= 0xFEFF) {
         // write are ignored on the gameboy
     } else if(address <= 0xFF7F) {
         writeIO(address, value);
-    } else if(address <= 0xFFFE) {
-        addr = 0x7E - (0xFFFE - address);
-        hram[addr] = value;
     } else {
-        ie[0] = value;
+        ram[address] = value;
     }
 }
 
 byte Memory::readIO(word address) {
-    word addr = 0x7F - (0xFF7F - address);
-    byte value = io[addr];
+    byte value = ram[address];
 
     if(address == IO_JOYPAD) {
         // the upper 2 bits always returns 1
@@ -188,8 +149,6 @@ byte Memory::readIO(word address) {
 }
 
 void Memory::writeIO(word address, byte value) {
-    word addr = 0x7F - (0xFF7F - address);
-
     if(address == IO_SERIAL_TRANSFER_DATA) {
         // TODO: remove this once I have LCD support
         std::cout << (char)value;
@@ -202,7 +161,7 @@ void Memory::writeIO(word address, byte value) {
         }
 
         TIMER_SYSTEM_COUNTER = 0;
-        io[addr] = 0;
+        ram[address] = 0;
         return;
     } else if(address == IO_TIMA) {
         if(TIMER_STATE == TIMER_STATE_OVERFLOW) {
@@ -214,9 +173,9 @@ void Memory::writeIO(word address, byte value) {
             TIMER_IS_TIMA_CHANGED = true;
         }
 
-        io[addr] = value;
+        ram[address] = value;
     } else if(address == IO_TAC) {
-        int tac = io[addr];
+        int tac = ram[address];
         int oldEnable = tac & 0x04;
         int newEnable = value & 0x04;
         int targetBit = getTimerSystemBit();
@@ -245,21 +204,21 @@ void Memory::writeIO(word address, byte value) {
             TIMER_FLAG_VALUE = (value & INTERRUPT_TIMER) >> 2;
         }
 
-        io[addr] = 0xE0 | value;
+        ram[address] = 0xE0 | value;
     } else if(address == IO_LCD_STATUS) {
         int lcdc = readIO(IO_LCDC);
 
         // When LCD is off bits 0 through 2 return 0 also bit 7 is always 1
         if((lcdc & 0x80) != 0x80) {
-            io[addr] = (0x80 | value) & 0xF8;
+            ram[address] = (0x80 | value) & 0xF8;
         } else {
-            io[addr] = (0x80 | value);
+            ram[address] = (0x80 | value);
         }
     } else if(address == IO_BG_PALETTE_DATA) {
         BG_PALETTE_DATA = value;
-        io[addr] = value;
+        ram[address] = value;
     } else {
-        io[addr] = value;
+        ram[address] = value;
     }
 
     if(address == IO_LY_COORDINATE || address == IO_LY_COMPARE) {

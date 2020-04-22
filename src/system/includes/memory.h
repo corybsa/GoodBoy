@@ -55,15 +55,16 @@
 class Memory {
 private:
     byte* cartridge;
-    byte* vram;
-    byte* sram;
-    byte* wram;
-    byte* eram;
-    byte* oam;
-    byte* fea0_feff;
-    byte* io;
-    byte* hram;
-    byte* ie;
+    byte* ram;
+    // byte* vram;
+    // byte* sram;
+    // byte* wram;
+    // byte* eram;
+    // byte* oam;
+    // byte* fea0_feff;
+    // byte* io;
+    // byte* hram;
+    // byte* ie;
 
     std::function<void(word, byte, byte)> gpuCallback;
 

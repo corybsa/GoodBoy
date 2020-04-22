@@ -19,7 +19,8 @@ public:
     Timers* timers;
 
     bool isCartLoaded = false;
-    bool cartChanged = false;
+    bool isCartChanged = false;
+    bool isRunning = true;
 
     GameBoy();
     ~GameBoy();
@@ -28,6 +29,7 @@ public:
     void loadRom(byte* rom);
     void run();
     void tick();
+    void quit();
 };
 
 #endif

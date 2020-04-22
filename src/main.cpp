@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <fstream>
+#include <thread>
 
 #include "system/util/includes/window.h"
 #include "system/util/includes/debugWindow.h"
@@ -17,6 +18,9 @@ int main(int argc, char* args[]) {
     Window mainWindow;
     DebugWindow debugWindow(gb);
     bool success = true;
+
+    byte* rom = openFile("./resources/roms/tests/mooneye/acceptance/instr/daa.gb");
+    gb->loadRom(rom);
 
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
@@ -39,10 +43,11 @@ int main(int argc, char* args[]) {
     } else {
         bool quit = false;
         SDL_Event e;
+        std::thread gameThread([gb]() -> void {
+            gb->run();
+        });
 
         while(!quit) {
-            gb->tick();
-
             // handle events on queue
             while(SDL_PollEvent(&e) != 0) {
 
@@ -97,33 +102,12 @@ int main(int argc, char* args[]) {
                 quit = true;
             }
         }
+
+        gb->quit();
+        gameThread.join();
     }
-
-    // gb->run();
     
-    // gb->loadRom(rom);
-    // printf("%s", gb->cartridge->toString());
-
-    /* printf("A: %04X\n", gb->cpu->registers.A);
-    printf("F: %04X\n", gb->cpu->registers.F);
-    printf("AF: %04X\n", gb->cpu->registers.AF);
-
-    printf("B: %04X\n", gb->cpu->registers.B);
-    printf("C: %04X\n", gb->cpu->registers.C);
-    printf("BC: %04X\n", gb->cpu->registers.BC);
-
-    printf("D: %04X\n", gb->cpu->registers.D);
-    printf("E: %04X\n", gb->cpu->registers.E);
-    printf("DE: %04X\n", gb->cpu->registers.DE);
-
-    printf("H: %04X\n", gb->cpu->registers.H);
-    printf("L: %04X\n", gb->cpu->registers.L);
-    printf("HL: %04X\n", gb->cpu->registers.HL);
-
-    printf("SP: %04X\n", gb->cpu->registers.SP);
-    printf("PC: %04X\n", gb->cpu->registers.PC); */
-    
-    delete rom;
+    delete[] rom;
     rom = NULL;
 
     delete gb;

@@ -1,5 +1,6 @@
 #include <chrono>
 #include <thread>
+#include <iostream>
 #include "includes/cpu.h"
 #include "includes/memory.h"
 #include "includes/globals.h"
@@ -74,10 +75,9 @@ void CPU::reset() {
 
 /*
     TODO:
-        During mode 0 and mode 1 the CPU can access both VRAM and OAM. During mode 2 the CPU
-        can only access VRAM, not OAM. During mode 3 OAM and VRAM can't be accessed. In GBC
-        mode the CPU can't access Palette RAM (FF69h and FF6Bh) during mode 3.
-
+        During mode 0 and mode 1 the CPU can access both VRAM and OAM.
+        During mode 2 the CPU can only access VRAM, not OAM.
+        During mode 3 OAM and VRAM can't be accessed.
 */
 void CPU::writeByte(int address, int value) {
     memory->writeByte(address, value);
@@ -118,15 +118,6 @@ void CPU::tick() {
         checkInterrupts();
     } else {
         decode(readByte(registers.PC++));
-        gpu->tick(cycles);
-    }
-}
-
-void CPU::run() {
-    isRunning = true;
-
-    while(isRunning) {
-        tick();
     }
 }
 
@@ -150,38 +141,29 @@ void CPU::resetFlags(int flags) {
  * Keeps the CPU from running as fast as it can. This will keep the frame rate at 60 fps.
  */
 void CPU::synchronize() {
-    // only sleep after ticking 1000 cycles
-    // TODO: is this a good idea?
-    if(cyclesSinceLastSync < 1000) {
+    // don't sync if not enough time passed
+    if(cyclesSinceLastSync < LCDC_PERIOD / 3) {
         return;
     }
 
     // our target sleep time is the length in time the previous instruction took.
-    unsigned long long target = (cyclesSinceLastSync * 1000000000ULL) / CPU_FREQUENCY;
+    unsigned long long target = (cyclesSinceLastSync * 1000000000LL) / CPU_FREQUENCY;
 
     // get the current nanoseconds
-    unsigned long long nanoseconds = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    unsigned long long nanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     // The sleep duration is the previous instruction time plus how long it's been since we last synced.
     // We subtract the nanoseconds to see if the CPU is running too fast.
     // If sleepDuration is positive that means that the CPU is running incredibly fast (for GameBoy standards, anyway),
     //   and we need to slow it down by sleeping.
-    unsigned long long sleepDuration = target + nanoseconds - lastSyncTime;
-
-// TODO: Does this happend in C++?
-    // There's a weird lag during vblank, so we can disable sleep during vblank
-    //   and just process everything as fast as possible to mitigate the lag.
-    // This is probably not the best solution, but it works.
-    // if(this.gpu.getMode() == GPU.Mode.VBLANK) {
-    //     sleepDuration = 0;
-    // }
+    unsigned long long sleepDuration = target + lastSyncTime - nanoseconds;
 
     // check if sleepDuration is between zero and the time it takes to complete a whole frame.
-    if(sleepDuration > 0 && sleepDuration < ((LCDC_PERIOD * 1000000000ULL) / CPU_FREQUENCY)) {
+    if(sleepDuration > 0 && sleepDuration < VBLANK_PERIOD) {
         sleep(sleepDuration);
 
         // need to keep track of how long it's been since we last synced.
-        lastSyncTime += target;
+        lastSyncTime = nanoseconds + sleepDuration;
     } else {
         // we need to know when we last synced.
         lastSyncTime = nanoseconds;
@@ -327,30 +309,26 @@ void CPU::decode(byte opCode) {
         haltBug = false;
     }
 
-    // if(opCode != 0xCB) {
-        int x = opCode >> 6;
-        int y = (opCode & 0b00111000) >> 3;
-        int z = opCode & 0b00000111;
-        int p = y >> 1;
-        int q = y % 2;
+    int x = opCode >> 6;
+    int y = (opCode & 0b00111000) >> 3;
+    int z = opCode & 0b00000111;
+    int p = y >> 1;
+    int q = y % 2;
 
-        switch(x) {
-            case 0b00:
-                doMiscOperation(y, z, q , p);
-                break;
-            case 0b01:
-                doLoadOperation(y, z);
-                break;
-            case 0b10:
-                doMathOperation(y, z);
-                break;
-            case 0b11:
-                doJumpOperation(y, z, q, p);
-                break;
-        }
-    // } else {
-    //     decodeCB(readByte(registers.PC++));
-    // }
+    switch(x) {
+        case 0b00:
+            doMiscOperation(y, z, q , p);
+            break;
+        case 0b01:
+            doLoadOperation(y, z);
+            break;
+        case 0b10:
+            doMathOperation(y, z);
+            break;
+        case 0b11:
+            doJumpOperation(y, z, q, p);
+            break;
+    }
 }
 
 /**
@@ -628,7 +606,7 @@ void CPU::doMiscOperation(int y, int z, int q, int p) {
         case 0b110: // load immediate 8-bit
             if(y == 0b110) { // ld (hl), x
                 writeByte(registers.HL, getByte());
-            } else {
+            } else { // ld [b, c, d, e, h, l, a], x
                 registers.set8Bit(y, getByte());
             }
 
