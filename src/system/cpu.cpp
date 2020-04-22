@@ -1065,6 +1065,8 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
                     break;
             }
 
+            incrementCycles(8);
+
             break;
         case 0b111: // reset
             rst(y * 8);
@@ -1627,22 +1629,22 @@ void CPU::daa() {
 
     // after an addition, adjust A if HALF or CARRY occurred, or if the result is out of bounds
     if(!sub) {
-        if(carry | registers.A > 0x99) {
-            registers.A = registers.A + 0x60;
+        if(carry || registers.A > 0x99) {
+            registers.A += 0x60;
             setFlags(CARRY);
         }
 
         if(half || (registers.A & 0x0F) > 0x09) {
-            registers.A = registers.A + 0x06;
+            registers.A += 0x06;
         }
     } else {
         // after a subtraction, only adjust if HALF or CARRY occurred
         if(carry) {
-            registers.A = registers.A - 0x60;
+            registers.A -= 0x60;
         }
 
         if(half) {
-            registers.A = registers.A - 0x06;
+            registers.A -= 0x06;
         }
     }
 

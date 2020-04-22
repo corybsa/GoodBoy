@@ -31,10 +31,12 @@ public:
     void test_0x05_sub_half();
     void test_0x05_sub_half2();
     void test_0x06();
-    void test_0x07();
+    void test_0x07_carry_set();
+    void test_0x07_carry_reset();
     void test_0x08();
     void test_0x09_half();
     void test_0x09_carry();
+    void test_0x09_half_carry();
     void test_0x0A();
     void test_0x0B();
     void test_0x0C();
@@ -45,8 +47,8 @@ public:
     void test_0x0D_half();
     void test_0x0D_half2();
     void test_0x0E();
-    void test_0x0F();
-    void test_0x0F_clear_carry();
+    void test_0x0F_carry_set();
+    void test_0x0F_carry_reset();
 
     void test_0x10();
     void test_0x11();
@@ -60,10 +62,13 @@ public:
     void test_0x15_half();
     void test_0x15_half2();
     void test_0x16();
-    void test_0x17();
+    void test_0x17_carry_set();
+    void test_0x17_carry_reset();
     void test_0x18();
     void test_0x18_backwards();
-    void test_0x19();
+    void test_0x19_half();
+    void test_0x19_carry();
+    void test_0x19_half_carry();
     void test_0x1A();
     void test_0x1B();
     void test_0x1C();
@@ -92,7 +97,9 @@ public:
     void test_0x25_sub_half2();
     void test_0x26();
     void test_0x27();
+    void test_0x27_big_number();
     void test_0x27_after_sub();
+    void test_0x27_after_sub_carry();
     void test_0x28();
     void test_0x29();
     void test_0x2A();
