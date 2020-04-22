@@ -22,6 +22,7 @@ public:
     char* byteToHex(char* info, byte value);
     char* boolToHex(char* info, bool value);
     char* intToString(char* info, int value);
+    char* floatToString(char* info, float value);
 };
 
 #endif

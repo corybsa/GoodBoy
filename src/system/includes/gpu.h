@@ -18,12 +18,10 @@ public:
     unsigned long previousCycles = 0;
     byte tiles[384][8][8] = {};
     byte backgroundMap[BG_HEIGHT][BG_WIDTH][8] = {};
-    int frameRate = 0;
+    float frameRate = 0;
     unsigned long long frameCount = 0;
     unsigned long long lastFrameTime = 0;
-    int minFPS = 9999;
-    int maxFPS = 0;
-
+    
     GPU(Memory* memory, LCD* lcd);
 
     void reset();

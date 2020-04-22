@@ -59,7 +59,7 @@ void DebugWindow::render() {
         texture->renderText(byteToHex("LY: ", gb->memory->readIO(IO_LY_COORDINATE)), 120, 85);
         texture->renderText(byteToHex("STAT: ", gb->memory->readIO(IO_LCD_STATUS)), 120, 105);
 
-        texture->renderText(intToString("FPS: ", gb->gpu->frameRate), 200, 200);
+        texture->renderText(floatToString("FPS: ", gb->gpu->frameRate), 200, 200);
         texture->renderText(intToString("Frame Count: ", gb->gpu->frameCount), 200, 225);
         texture->renderText(intToString("GPU Mode: ", gb->gpu->mode), 200, 250);
 
@@ -120,6 +120,16 @@ char* DebugWindow::boolToHex(char* info, bool value) {
 char* DebugWindow::intToString(char* info, int value) {
     std::string s(info);
     s += std::to_string(value);
+    int length = strlen(s.c_str());
+    char* chars = new char[length];
+    strncpy(chars, s.c_str(), length + 1);
+
+    return chars;
+}
+
+char* DebugWindow::floatToString(char* info, float value) {
+    std::string s(info);
+    s += std::to_string(value).substr(0, 5);
     int length = strlen(s.c_str());
     char* chars = new char[length];
     strncpy(chars, s.c_str(), length + 1);
