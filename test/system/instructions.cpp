@@ -112,10 +112,10 @@ void InstructionsTest::beforeAll() {
 }
 
 void InstructionsTest::beforeEach() {
+    // reset the first 0x8000 bytes of the rom. I'm sure I won't use more than that...
     std::fill(rom, rom + 0x7FFF, 0);
     gb->cpu->registers.PC = 0x100;
     gb->cpu->registers.SP = 0xFFFE;
-    gb->cpu->resetFlags(ZERO | SUB | HALF | CARRY);
 }
 
 void InstructionsTest::tearDown() {
@@ -125,6 +125,9 @@ void InstructionsTest::tearDown() {
     }
 }
 
+/**
+ * Create a rom with the bytes starting at 0x100 and load the rom into the GameBoy
+ */
 void InstructionsTest::loadRom(std::vector<byte> bytes) {
     word length = bytes.size() + 0x100;
 
@@ -167,24 +170,21 @@ void InstructionsTest::test_0x01() {
 
 // ld (bc), a
 void InstructionsTest::test_0x02() {
+    // TODO: make all tests like this. Only test the opcode in question.
+    gb->cpu->registers.A = 0x42;
+    gb->cpu->registers.BC = 0xC000;
+
     loadRom({
-        0x3E, // ld a, $42
-        0x42,
-        0x01, // ld bc, $C000
-        0x00,
-        0xC0,
         0x02 // ld (bc), a
     });
 
     gb->cpu->tick();
-    gb->cpu->tick();
-    gb->cpu->tick();
 
-    expect(gb->cpu->registers.PC, 0x106, "PC should be 0x106");
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
     expect(gb->cpu->registers.A, 0x42, "A should be 0x42");
     expect(gb->cpu->registers.BC, 0xC000, "BC should be 0xC000");
     expect(gb->memory->readByte(0xC000), 0x42, "The value in memory pointed to by BC should be 0x42");
-    expect(gb->cpu->cycles, 28, "should take 28 cycles");
+    expect(gb->cpu->cycles, 8, "should take 8 cycles");
 }
 
 // inc bc
