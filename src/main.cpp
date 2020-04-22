@@ -19,9 +19,6 @@ int main(int argc, char* args[]) {
     DebugWindow debugWindow(gb);
     bool success = true;
 
-    byte* rom = openFile("./resources/roms/tests/mooneye/acceptance/instr/daa.gb");
-    gb->loadRom(rom);
-
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
         success = false;

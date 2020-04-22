@@ -61,7 +61,3 @@ void GameBoy::tick() {
 void GameBoy::quit() {
     isRunning = false;
 }
-
-void GameBoy::tick() {
-    cpu->tick();
-}
