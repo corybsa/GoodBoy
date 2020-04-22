@@ -181,8 +181,6 @@ void InstructionsTest::test_0x02() {
     gb->cpu->tick();
 
     expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
-    expect(gb->cpu->registers.A, 0x42, "A should be 0x42");
-    expect(gb->cpu->registers.BC, 0xC000, "BC should be 0xC000");
     expect(gb->memory->readByte(0xC000), 0x42, "The value in memory pointed to by BC should be 0x42");
     expect(gb->cpu->cycles, 8, "should take 8 cycles");
 }
