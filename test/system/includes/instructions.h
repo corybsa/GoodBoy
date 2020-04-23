@@ -101,11 +101,18 @@ public:
     void test_0x27_after_sub();
     void test_0x27_after_sub_carry();
     void test_0x28();
+    void test_0x28_backwards();
+    void test_0x28_no_jump();
     void test_0x29();
     void test_0x2A();
     void test_0x2B();
     void test_0x2C();
+    void test_0x2C_half();
+    void test_0x2C_zero_half();
     void test_0x2D();
+    void test_0x2D_zero_sub();
+    void test_0x2D_sub_half();
+    void test_0x2D_sub_half2();
     void test_0x2E();
     void test_0x2F();
 

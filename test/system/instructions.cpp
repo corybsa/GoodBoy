@@ -88,11 +88,18 @@ InstructionsTest::InstructionsTest(GameBoy* gameBoy) {
     Test::addTest([this]() -> void { test_0x27_after_sub(); });
     Test::addTest([this]() -> void { test_0x27_after_sub_carry(); });
     Test::addTest([this]() -> void { test_0x28(); });
+    Test::addTest([this]() -> void { test_0x28_backwards(); });
+    Test::addTest([this]() -> void { test_0x28_no_jump(); });
     Test::addTest([this]() -> void { test_0x29(); });
     Test::addTest([this]() -> void { test_0x2A(); });
     Test::addTest([this]() -> void { test_0x2B(); });
     Test::addTest([this]() -> void { test_0x2C(); });
+    Test::addTest([this]() -> void { test_0x2C_half(); });
+    Test::addTest([this]() -> void { test_0x2C_zero_half(); });
     Test::addTest([this]() -> void { test_0x2D(); });
+    Test::addTest([this]() -> void { test_0x2D_zero_sub(); });
+    Test::addTest([this]() -> void { test_0x2D_sub_half(); });
+    Test::addTest([this]() -> void { test_0x2D_sub_half2(); });
     Test::addTest([this]() -> void { test_0x2E(); });
     Test::addTest([this]() -> void { test_0x2F(); });
 
@@ -1382,36 +1389,240 @@ void InstructionsTest::test_0x27_after_sub_carry() {
     expect(gb->cpu->cycles, 4, "should take 4 cycles");
 }
 
+// jr z x
 void InstructionsTest::test_0x28() {
+    loadRom({
+        0x28, // jr z, $05
+        0x05
+    });
 
+    gb->cpu->setFlags(ZERO);
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x107, "PC should be 0x107");
+    expect(gb->cpu->cycles, 12, "should take 12 cycles");
 }
 
+void InstructionsTest::test_0x28_backwards() {
+    loadRom({
+        0x18, // jr $05
+        0x05,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x28, // jr z, $-05
+        0xFB
+    });
+
+    gb->cpu->setFlags(ZERO);
+
+    gb->cpu->tick();
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x104, "PC should be 0x104");
+    expect(gb->cpu->cycles, 24, "should take 24 cycles");
+}
+
+void InstructionsTest::test_0x28_no_jump() {
+    loadRom({
+        0x28, // jr z, $05
+        0x05
+    });
+
+    gb->cpu->resetFlags(ZERO);
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x102, "PC should be 0x102");
+    expect(gb->cpu->cycles, 8, "should take 8 cycles");
+}
+
+// add hl, hl
 void InstructionsTest::test_0x29() {
+    loadRom({
+        0x29 // add hl, hl
+    });
 
+    gb->cpu->registers.HL = 0x8A23;
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.HL, 0x1446, "HL should be 0x1446");
+    expect(gb->cpu->registers.F, HALF | CARRY, "HALF and CARRY flags should be set");
+    expect(gb->cpu->cycles, 8, "should take 8 cycles");
 }
 
+// ld a, (hl+)
 void InstructionsTest::test_0x2A() {
+    loadRom({
+        0x2A // ld a, (hl+)
+    });
 
+    gb->cpu->registers.HL = 0xC000;
+    gb->memory->writeByte(0xC000, 0x56);
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.A, 0x56, "A should be 0x56");
+    expect(gb->cpu->registers.HL, 0xC001, "HL should be 0xC001");
+    expect(gb->cpu->cycles, 8, "should take 8 cycles");
 }
 
+// dec hl
 void InstructionsTest::test_0x2B() {
+    loadRom({
+        0x2B // dec hl
+    });
 
+    gb->cpu->registers.HL = 0xC000;
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.HL, 0xBFFF, "HL should be 0xBFFF");
+    expect(gb->cpu->cycles, 8, "should take 8 cycles");
 }
 
+// inc l
 void InstructionsTest::test_0x2C() {
+    loadRom({
+        0x2C // inc l
+    });
 
+    gb->cpu->registers.L = 0x00;
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.L, 0x01, "L should be 0x01");
+    expect(gb->cpu->registers.F, 0, "no flags should be set");
+    expect(gb->cpu->cycles, 4, "should take 4 cycles");
 }
 
+void InstructionsTest::test_0x2C_half() {
+    loadRom({
+        0x2C // inc l
+    });
+
+    gb->cpu->registers.L = 0x0F;
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.L, 0x10, "L should be 0x10");
+    expect(gb->cpu->registers.F, HALF, "HALF flag should be set");
+    expect(gb->cpu->cycles, 4, "should take 4 cycles");
+}
+
+void InstructionsTest::test_0x2C_zero_half() {
+    loadRom({
+        0x2C // inc l
+    });
+
+    gb->cpu->registers.L = 0xFF;
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.L, 0x00, "L should be 0x00");
+    expect(gb->cpu->registers.F, ZERO | HALF, "ZERO and HALF flags should be set");
+    expect(gb->cpu->cycles, 4, "should take 4 cycles");
+}
+
+// dec l
 void InstructionsTest::test_0x2D() {
+    loadRom({
+        0x2D // dec l
+    });
 
+    gb->cpu->registers.L = 0xFF;
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.L, 0xFE, "L should be 0xFE");
+    expect(gb->cpu->registers.F, SUB, "SUB flag should be set");
+    expect(gb->cpu->cycles, 4, "should take 4 cycles");
 }
 
+void InstructionsTest::test_0x2D_zero_sub() {
+    loadRom({
+        0x2D // dec l
+    });
+
+    gb->cpu->registers.L = 0x01;
+    
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.L, 0x00, "L should be 0x00");
+    expect(gb->cpu->registers.F, ZERO | SUB, "ZERO and SUB flags should be set");
+    expect(gb->cpu->cycles, 4, "should take 4 cycles");
+}
+
+void InstructionsTest::test_0x2D_sub_half() {
+    loadRom({
+        0x2D // dec l
+    });
+
+    gb->cpu->registers.L = 0x10;
+    
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.L, 0x0F, "L should be 0x0F");
+    expect(gb->cpu->registers.F, SUB | HALF, "SUB and HALF flags should be set");
+    expect(gb->cpu->cycles, 4, "should take 4 cycles");
+}
+
+void InstructionsTest::test_0x2D_sub_half2() {
+    loadRom({
+        0x2D // dec l
+    });
+
+    gb->cpu->registers.L = 0x00;
+    
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.L, 0xFF, "L should be 0xFF");
+    expect(gb->cpu->registers.F, SUB | HALF, "SUB and HALF flags should be set");
+    expect(gb->cpu->cycles, 4, "should take 4 cycles");
+}
+
+// ld l, x
 void InstructionsTest::test_0x2E() {
+    loadRom({
+        0x2E, // ld l, $F3
+        0xF3
+    });
 
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x102, "PC should be 0x102");
+    expect(gb->cpu->registers.L, 0xF3, "L should be 0xF3");
+    expect(gb->cpu->cycles, 8, "should take 8 cycles");
 }
 
+// cpl
 void InstructionsTest::test_0x2F() {
+    loadRom({
+        0x2F // cpl
+    });
 
+    gb->cpu->registers.A = 0x35;
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.A, 0xCA, "A should be 0xCA");
+    expect(gb->cpu->registers.F, SUB | HALF, "SUB and HALF flags should be set");
+    expect(gb->cpu->cycles, 4, "should take 4 cycles");
 }
 
 #pragma endregion
