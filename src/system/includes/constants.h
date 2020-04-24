@@ -52,10 +52,10 @@ static const int PIXEL_BLACK = 3;
 
 // interrupts
 static const int INTERRUPT_VBLANK = 0x01;
-static const int INTERRUPT_LCD_STAT = 0x01;
-static const int INTERRUPT_TIMER = 0x01;
-static const int INTERRUPT_SERIAL = 0x01;
-static const int INTERRUPT_JOYPAD = 0x01;
+static const int INTERRUPT_LCD_STAT = 0x02;
+static const int INTERRUPT_TIMER = 0x04;
+static const int INTERRUPT_SERIAL = 0x08;
+static const int INTERRUPT_JOYPAD = 0x10;
 
 // timer info
 static const int TIMER_STATE_COUNTING = 0;

@@ -11,13 +11,13 @@ public:
     GameBoy* gb;
     byte* rom;
 
-    InstructionsTest(GameBoy *gameBoy);
+    explicit InstructionsTest(GameBoy *gameBoy);
 
-    void beforeAll();
-    void beforeEach();
-    void tearDown();
+    void beforeAll() override;
+    void beforeEach() override;
+    void tearDown() override;
 
-    void loadRom(std::vector<byte> bytes);
+    void loadRom(std::vector<byte> bytes) const;
 
     void test_0x00();
     void test_0x01();

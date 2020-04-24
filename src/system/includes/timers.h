@@ -19,11 +19,11 @@ private:
     Memory* memory;
 
 public:
-    Timers(Memory* memory);
+    explicit Timers(Memory* memory);
 
-    void reset();
+    static void reset();
+    static int getFrequency(int freq);
     void tick(int cycles);
-    int getFrequency(int freq);
     void incrementSystemCounter(int cycles);
 };
 

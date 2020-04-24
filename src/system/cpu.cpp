@@ -32,7 +32,6 @@ void CPU::reset() {
 
     isHalted = false;
     haltBug = false;
-    haltSkip = false;
     
     writeByte(IO_TIMA, 0x00);
     writeByte(IO_TMA, 0x00);
@@ -1837,7 +1836,6 @@ void CPU::halt() {
         */
         if((ie & flags & 0x1F) == 0) {
             isHalted = true;
-            haltSkip = true;
         }
         /*
             HALT mode is not entered. HALT bug occurs: The CPU fails to increase PC when

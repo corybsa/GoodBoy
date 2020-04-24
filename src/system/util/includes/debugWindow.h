@@ -12,17 +12,17 @@ public:
     Texture* texture;
     word count;
 
-    DebugWindow(GameBoy* gameBoy);
+    explicit DebugWindow(GameBoy* gameBoy);
 
-    virtual bool init(char* title, int w, int h);
-    virtual void free();
+    bool init(char* title, int w, int h) override;
+    void free() override;
     void render();
     void askForBreakpoint();
-    char* wordToHex(char* info, word value);
-    char* byteToHex(char* info, byte value);
-    char* boolToHex(char* info, bool value);
-    char* intToString(char* info, int value);
-    char* floatToString(char* info, float value);
+    static char* wordToHex(char* info, word value);
+    static char* byteToHex(char* info, byte value);
+    static char* boolToHex(char* info, bool value);
+    static char* intToString(char* info, int value);
+    static char* floatToString(char* info, float value);
 };
 
 #endif

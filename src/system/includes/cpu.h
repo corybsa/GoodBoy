@@ -56,7 +56,7 @@ private:
     void writeByte(int address, int value);
     byte readByte(int address);
     void synchronize();
-    void sleep(unsigned long long duration);
+    static void sleep(unsigned long long duration);
     void incrementCycles(int n);
     void checkInterrupts();
     void decode(byte opCode);
@@ -70,7 +70,7 @@ private:
     void call();
     byte getByte();
     word getWord();
-    word combineBytes(byte high, byte low);
+    static word combineBytes(byte high, byte low);
     byte getIF();
     byte getIE();
 
@@ -98,8 +98,8 @@ private:
     void scf();
     void ccf();
     void bit(int position, byte value);
-    byte res(int position, byte value);
-    byte set(int position, byte value);
+    static byte res(int position, byte value);
+    static byte set(int position, byte value);
     byte bitwiseAnd(byte num1, byte num2);
     byte bitwiseXor(byte num1, byte num2);
     byte bitwiseOr(byte num1, byte num2);
@@ -120,7 +120,6 @@ public:
 
     bool isHalted = false;
     bool haltBug = false;
-    bool haltSkip = false;
     bool justHalted = false;
 
     unsigned long long cycles = 0;

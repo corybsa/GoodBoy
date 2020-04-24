@@ -20,8 +20,10 @@ public:
     bool isColor;
     bool isSuper;
 
-    Cartridge(byte *data);
+    explicit Cartridge(byte *data);
     ~Cartridge();
+
+    static std::string intToHex(word value);
 
     void parseTitle();
     void parseLicense();
@@ -31,8 +33,7 @@ public:
     void parseDestinationCode();
     void calculateHeaderChecksum();
     void calculateGlobalChecksum();
-    std::string intToHex(word value);
-    std::string toString();
+    std::string toString() const;
 };
 
 #endif

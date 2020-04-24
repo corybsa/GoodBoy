@@ -27,7 +27,7 @@ public:
     virtual void beforeEach() = 0;
     virtual void tearDown() = 0;
 
-    void addTest(std::function<void()> func);
+    void addTest(const std::function<void()>& func);
     void run();
 
     void expect(size_t value, size_t expected, char* message, std::experimental::source_location loc = std::experimental::source_location::current());

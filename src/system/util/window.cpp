@@ -2,34 +2,27 @@
 #include "includes/texture.h"
 
 Window::Window() {
-    window = NULL;
-    renderer = NULL;
+    window = nullptr;
+    renderer = nullptr;
 
-    isMouseFocused = false;
     isKeyboardFocused = false;
-    isFullScreen = false;
     isShown = false;
+    isMinimized = false;
     windowId = -1;
-
-    width = 0;
-    height = 0;
 }
 
 bool Window::init(char* title, int w, int h) {
     window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_SHOWN);
 
-    if(window != NULL) {
-        isMouseFocused = true;
+    if(window != nullptr) {
         isKeyboardFocused = true;
-        width = w;
-        height = h;
 
         renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-        if(renderer == NULL) {
+        if(renderer == nullptr) {
             printf("Rederer could not be created SDL Error: %s\n", SDL_GetError());
             SDL_DestroyWindow(window);
-            window = NULL;
+            window = nullptr;
         } else {
             // init renderer color
             SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
@@ -44,22 +37,21 @@ bool Window::init(char* title, int w, int h) {
         printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
     }
 
-    return window != NULL && renderer != NULL;
+    return window != nullptr && renderer != nullptr;
 }
 
 void Window::free() {
-    if(window != NULL) {
+    if(window != nullptr) {
         SDL_DestroyWindow(window);
     }
 
-    if(renderer != NULL) {
+    if(renderer != nullptr) {
         SDL_DestroyRenderer(renderer);
     }
 
-    isMouseFocused = false;
+    window = nullptr;
+    renderer = nullptr;
     isKeyboardFocused = false;
-    width = 0;
-    height = 0;
 }
 
 void Window::handleEvent(SDL_Event &e) {
@@ -73,22 +65,8 @@ void Window::handleEvent(SDL_Event &e) {
                 isShown = false;
 
                 break;
-            case SDL_WINDOWEVENT_SIZE_CHANGED: // get new dimensions and repaint
-                width = e.window.data1;
-                height = e.window.data2;
-                SDL_RenderPresent(renderer);
-
-                break;
             case SDL_WINDOWEVENT_EXPOSED: // repaint on expose
                 SDL_RenderPresent(renderer);
-
-                break;
-            case SDL_WINDOWEVENT_ENTER: // mouse enter
-                isMouseFocused = true;
-
-                break;
-            case SDL_WINDOWEVENT_LEAVE: // mouse exit
-                isMouseFocused = false;
 
                 break;
             case SDL_WINDOWEVENT_FOCUS_GAINED: // keyboard focus gained
@@ -103,10 +81,6 @@ void Window::handleEvent(SDL_Event &e) {
                 isMinimized = true;
 
                 break;
-            case SDL_WINDOWEVENT_MAXIMIZED: // window maximized
-                isMinimized = false;
-
-                break;
             case SDL_WINDOWEVENT_RESTORED: // window restored
                 isMinimized = false;
 
@@ -119,15 +93,7 @@ void Window::handleEvent(SDL_Event &e) {
     }
 }
 
-void Window::focus() {
-    if(!isShown) {
-        SDL_ShowWindow(window);
-    }
-
-    SDL_RaiseWindow(window);
-}
-
-void Window::render() {
+void Window::render() const {
     if(!isMinimized) {
         // clear screen
         SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);

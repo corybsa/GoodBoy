@@ -2,7 +2,7 @@
 #include <iostream>
 
 Texture::Texture(TTF_Font* f, SDL_Renderer* r) {
-    texture = NULL;
+    texture = nullptr;
     width = 0;
     height = 0;
     font = f;
@@ -12,14 +12,14 @@ Texture::Texture(TTF_Font* f, SDL_Renderer* r) {
 Texture::~Texture() {
     TTF_CloseFont(font);
     TTF_Quit();
-    font = NULL;
+    font = nullptr;
     free();
 }
 
 void Texture::free() {
-    if(texture != NULL) {
+    if(texture != nullptr) {
         SDL_DestroyTexture(texture);
-        texture = NULL;
+        texture = nullptr;
         width = 0;
         height = 0;
     }
@@ -29,7 +29,7 @@ void Texture::renderText(char* text, int x, int y) {
     // get rid of pre-existing texture
     free();
 
-    if(font == NULL) {
+    if(font == nullptr) {
         printf("Failed to load font! SDL_ttf Error: %s\n", TTF_GetError());
         return;
     }
@@ -46,13 +46,13 @@ void Texture::renderText(char* text, int x, int y) {
     // the _Shaded suffix means anti-alias
     SDL_Surface* surface = TTF_RenderText_Shaded(font, text, black, white);
 
-    if(surface == NULL) {
+    if(surface == nullptr) {
         printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
     } else {
         // create texture from surface pixels
         texture = SDL_CreateTextureFromSurface(renderer, surface);
 
-        if(texture == NULL) {
+        if(texture == nullptr) {
             printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
         } else {
             // get image dimensions
@@ -63,23 +63,11 @@ void Texture::renderText(char* text, int x, int y) {
         SDL_FreeSurface(surface);
     }
 
-    if(texture == NULL) {
+    if(texture == nullptr) {
         printf("Could not create texture!\n");
     } else {
         render(x, y);
     }
-}
-
-void Texture::setColor(byte red, byte green, byte blue) {
-    SDL_SetTextureColorMod(texture, red, green, blue);
-}
-
-void Texture::setBlendMode(SDL_BlendMode blending) {
-    SDL_SetTextureBlendMode(texture, blending);
-}
-
-void Texture::setAlpha(byte alpha) {
-    SDL_SetTextureAlphaMod(texture, alpha);
 }
 
 void Texture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip) {
@@ -87,7 +75,7 @@ void Texture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* cent
     SDL_Rect renderQuad = { x, y, width, height };
 
     // set clip rendering dimensions
-    if(clip != NULL) {
+    if(clip != nullptr) {
         renderQuad.w = clip->w;
         renderQuad.h = clip->h;
     }

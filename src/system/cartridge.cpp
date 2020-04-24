@@ -7,6 +7,7 @@ Cartridge::Cartridge(byte *data) {
     isColor = rom[0x143] == 0x80;
     isSuper = rom[0x146] == 0x03;
     romVersionNumber = rom[0x14C];
+    romBankNumber = 0;
 
     parseTitle();
     parseLicense();
@@ -20,12 +21,23 @@ Cartridge::Cartridge(byte *data) {
 
 Cartridge::~Cartridge() {
     delete[] rom;
-    rom = NULL;
+    rom = nullptr;
+}
+
+std::string Cartridge::intToHex(word value) {
+    char* digits = "0123456789ABCDEF";
+    auto hex_len = sizeof(value) << 1;
+    std::string rc(hex_len, '0');
+
+    for (size_t i = 0, j = (hex_len-1) * 4 ; i < hex_len; ++i, j -= 4) {
+        rc[i] = digits[(value >> j) & 0x0f];
+    }
+
+    return rc;
 }
 
 void Cartridge::parseTitle() {
     title = "";
-    int position = 0;
 
     for(int i = 0x0134; i <= 0x0142; i++) {
         title.push_back((char)rom[i]);
@@ -109,19 +121,7 @@ void Cartridge::calculateGlobalChecksum() {
     }
 }
 
-std::string Cartridge::intToHex(word value) {
-    char* digits = "0123456789ABCDEF";
-    auto hex_len = sizeof(value) << 1;
-    std::string rc(hex_len, '0');
-    
-    for (size_t i = 0, j = (hex_len-1) * 4 ; i < hex_len; ++i, j -= 4) {
-        rc[i] = digits[(value >> j) & 0x0f];
-    }
-
-    return rc;
-}
-
-std::string Cartridge::toString() {
+std::string Cartridge::toString() const {
     std::string ret = "Title: " + title + "\n" +
            "CGB Compatible: " + (isColor ? "Yes" : "No") + "\n" +
            "Licensee: " + license + "\n" +

@@ -19,10 +19,7 @@ public:
 
     void free();
     void renderText(char* text, int x, int y);
-    void setColor(byte red, byte green, byte blue);
-    void setBlendMode(SDL_BlendMode blending);
-    void setAlpha(byte alpha);
-    void render(int x, int y, SDL_Rect* clip = NULL, double andgle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+    void render(int x, int y, SDL_Rect* clip = nullptr, double angle = 0.0, SDL_Point* center = nullptr, SDL_RendererFlip flip = SDL_FLIP_NONE);
 };
 
 #endif

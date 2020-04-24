@@ -32,6 +32,7 @@ ifeq ($(UNAME_S),Darwin)
 endif
 
 all: clean
+all: testclean
 all: build $(APP_DIR)/$(TARGET)
 
 $(OBJ_DIR)/%.o: %.cpp
@@ -42,8 +43,7 @@ $(APP_DIR)/$(TARGET): $(OBJECTS)
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -o $(APP_DIR)/$(TARGET) $^ $(LDFLAGS)
 
-test: testclean
-test: testbuild $(TEST_APP_DIR)/$(TARGET)
+all: testbuild $(TEST_APP_DIR)/$(TARGET)
 
 $(TEST_OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(@D)
@@ -53,7 +53,7 @@ $(TEST_APP_DIR)/$(TARGET): $(TEST_OBJECTS)
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -o $(TEST_APP_DIR)/$(TARGET) $^ $(LDFLAGS)
 
-.PHONY: all build clean debug release test testbuild testclean
+.PHONY: all build clean debug release testbuild testclean
 
 build:
 	@mkdir -p $(APP_DIR)

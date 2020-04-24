@@ -13,10 +13,10 @@ class GameBoy {
 public:
     Cartridge* cartridge;
     Memory* memory;
+    Timers* timers;
     CPU* cpu;
     GPU* gpu;
     LCD* lcd;
-    Timers* timers;
 
     bool isCartLoaded = false;
     bool isCartChanged = false;

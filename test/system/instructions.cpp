@@ -1,10 +1,9 @@
 #include "includes/instructions.h"
-#include <iostream>
 #include <algorithm>
 
 InstructionsTest::InstructionsTest(GameBoy* gameBoy) {
     gb = gameBoy;
-    rom = NULL;
+    rom = nullptr;
 
     Test::addTest([this]() -> void { test_0x00(); });
     Test::addTest([this]() -> void { test_0x01(); });
@@ -122,7 +121,8 @@ InstructionsTest::InstructionsTest(GameBoy* gameBoy) {
 }
 
 void InstructionsTest::beforeAll() {
-    rom = new byte[0x800000];
+    rom = new byte[0x8000];
+    printf("\nInstruction Tests running...");
 }
 
 void InstructionsTest::beforeEach() {
@@ -133,16 +133,16 @@ void InstructionsTest::beforeEach() {
 }
 
 void InstructionsTest::tearDown() {
-    if(rom != NULL) {
+    if(rom != nullptr) {
         delete[] rom;
-        rom = NULL;
+        rom = nullptr;
     }
 }
 
 /**
  * Create a rom with the bytes starting at 0x100 and load the rom into the GameBoy
  */
-void InstructionsTest::loadRom(std::vector<byte> bytes) {
+void InstructionsTest::loadRom(std::vector<byte> bytes) const {
     word length = bytes.size() + 0x100;
 
     for(word i = 0x100; i < length; i++) {

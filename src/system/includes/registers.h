@@ -50,10 +50,10 @@ public:
 
     Registers() = default;
 
-    byte get8Bit(int reg);
+    byte get8Bit(int reg) const;
     void set8Bit(int reg, byte value);
 
-    word get16Bit(int reg, bool useAF);
+    word get16Bit(int reg, bool useAF) const;
     void set16Bit(int reg, word value, bool useAF);
 };
 

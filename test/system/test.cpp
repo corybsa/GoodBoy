@@ -1,6 +1,5 @@
 #include "includes/test.h"
 #include <iostream>
-#include <sstream>
 
 Test::Test() {
     testsFailed = 0;
@@ -14,16 +13,16 @@ Test::Test() {
     cyan = "\033[1;36m";
 }
 
-void Test::addTest(std::function<void()> func) {
+void Test::addTest(const std::function<void()>& func) {
     tests.push_back(func);
 }
 
 void Test::run() {
     beforeAll();
 
-    std::vector<std::function<void()>>::iterator it = tests.begin();
+    auto it = tests.begin();
 
-    for(std::function<void()> t : tests) {
+    for(const auto &t : tests) {
         beforeEach();
         t();
     }
@@ -37,7 +36,7 @@ void Test::run() {
     }
 }
 
-void Test::expect(size_t value, size_t expected, char* message, std::experimental::source_location loc = std::experimental::source_location::current()) {
+void Test::expect(size_t value, size_t expected, char* message, std::experimental::source_location loc) {
     if(value != expected) {
         std::stringstream ss;
         ss << red << message << white << std::endl;

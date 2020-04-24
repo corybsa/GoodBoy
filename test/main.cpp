@@ -5,7 +5,7 @@
 #include "system/includes/instructions.h"
 
 int main(int argc, char* args[]) {
-    GameBoy* gb = new GameBoy();
+    auto* gb = new GameBoy();
 
     CPUTest cpuTest(gb);
     cpuTest.run();
@@ -17,7 +17,6 @@ int main(int argc, char* args[]) {
     instrTest.run();
 
     delete gb;
-    gb = NULL;
 
     return 0;
 }

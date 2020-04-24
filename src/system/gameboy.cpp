@@ -21,12 +21,12 @@ GameBoy::~GameBoy() {
     delete gpu;
     delete cpu;
 
-    cartridge = NULL;
-    memory = NULL;
-    timers = NULL;
-    lcd = NULL;
-    gpu = NULL;
-    cpu = NULL;
+    cartridge = nullptr;
+    memory = nullptr;
+    timers = nullptr;
+    lcd = nullptr;
+    gpu = nullptr;
+    cpu = nullptr;
 }
 
 void GameBoy::reset() {
@@ -55,7 +55,12 @@ void GameBoy::run() {
 }
 
 void GameBoy::tick() {
+    if(!isCartLoaded) {
+        return;
+    }
+
     cpu->tick();
+    gpu->tick(cpu->cycles);
 }
 
 void GameBoy::quit() {

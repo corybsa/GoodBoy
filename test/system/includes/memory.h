@@ -9,11 +9,11 @@ class MemoryTest : public Test {
 public:
     GameBoy* gb;
 
-    MemoryTest(GameBoy* gameBoy);
+    explicit MemoryTest(GameBoy* gameBoy);
 
-    void beforeAll();
-    void beforeEach();
-    void tearDown();
+    void beforeAll() override;
+    void beforeEach() override;
+    void tearDown() override;
 
     void romRange();
     void vramRange();
@@ -26,6 +26,8 @@ public:
     void ff4c_ff7fRange();
     void hramRange();
     void ieRangeTest();
+
+    // TODO: test bank switching
 };
 
 #endif

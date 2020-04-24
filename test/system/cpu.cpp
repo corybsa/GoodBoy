@@ -7,10 +7,12 @@ CPUTest::CPUTest(GameBoy* gameBoy) {
     Test::addTest([this]() -> void { resetFlags(); });
     Test::addTest([this]() -> void { complexFlagLogic(); });
     Test::addTest([this]() -> void { manipulateRegisters(); });
+    Test::addTest([this]() -> void { nestedInterrupt(); });
 }
 
 void CPUTest::beforeAll() {
-    
+    gb->reset();
+    printf("\nCPU Tests running...");
 }
 
 void CPUTest::tearDown() {
@@ -140,13 +142,13 @@ void CPUTest::nestedInterrupt() {
 
     gb->cpu->tick(); // nop
     expect(gb->cpu->ime, true, "IME should be enabled on the cycle after ei");
-    expect(gb->cpu->registers.PC, 0x102, "PC should be 0x102");
+    expect(gb->cpu->registers.PC, 0x104, "PC should be 0x104");
 
     gb->cpu->tick(); // jump to interrupt vector
     expect(gb->cpu->registers.PC, 0x40, "PC should be 0x40");
-    expect(gb->cpu->ime, false, "IME should be disabled after calling an interrupt.");
-    expect(gb->memory->readByte(0xFFFD), 0x01, "0x0104 should be pushed to the stack.");
-    expect(gb->memory->readByte(0xFFFC), 0x04, "0x0104 should be pushed to the stack.");
+    expect(gb->cpu->ime, false, "IME should be disabled after calling an interrupt");
+    expect(gb->memory->readByte(0xFFFD), 0x01, "0x0104 should be pushed to the stack");
+    expect(gb->memory->readByte(0xFFFC), 0x04, "0x0104 should be pushed to the stack");
 
     // should be in vblank interrupt
     gb->cpu->tick(); // ld a, 0x42
@@ -164,11 +166,11 @@ void CPUTest::nestedInterrupt() {
     expect(gb->cpu->ime, true, "IME should be enabled on the cycle after ei");
     expect(gb->cpu->registers.PC, 0x44, "PC should be 0x44");
 
-    gb->cpu->tick(); // jump to interrupt vector
+    gb->cpu->tick(); // jump to joypad interrupt vector
     expect(gb->cpu->registers.PC, 0x60, "PC should be 0x60");
-    expect(gb->cpu->ime, false, "IME should be disabled after calling an interrupt.");
-    expect(gb->memory->readByte(0xFFFB), 0x00, "0x0044 should be pushed to the stack.");
-    expect(gb->memory->readByte(0xFFFA), 0x44, "0x0044 should be pushed to the stack.");
+    expect(gb->cpu->ime, false, "IME should be disabled after calling an interrupt");
+    expect(gb->memory->readByte(0xFFFB), 0x00, "0x00 should be pushed to the stack at 0xFFFB");
+    expect(gb->memory->readByte(0xFFFA), 0x44, "0x44 should be pushed to the stack at 0xFFFA");
 
     // should be in joypad interrupt vector
     gb->cpu->tick(); // ld c, 0x42
@@ -186,5 +188,5 @@ void CPUTest::nestedInterrupt() {
     expect(gb->cpu->isHalted, true, "should halt the cpu");
 
     delete[] rom;
-    rom = NULL;
+    rom = nullptr;
 }

@@ -47,8 +47,14 @@ void GPU::tick(unsigned long cycles) {
 
                     // calculate frame rate
                     ++frameCount;
+
                     unsigned long long nanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-                    frameRate = (float)1000000000 / (nanoseconds - lastFrameTime);
+
+                    // update fps 4 times per second
+                    if((frameCount % 15) == 0) {
+                        frameRate = (float)1000000000 / (float)(nanoseconds - lastFrameTime);
+                    }
+
                     lastFrameTime = nanoseconds;
                 }
 

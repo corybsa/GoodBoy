@@ -1,6 +1,7 @@
 #include "includes/memory.h"
 #include "includes/globals.h"
 #include <iostream>
+#include <utility>
 
 Memory::Memory() {
     cartridge = new byte[0x800000];
@@ -10,12 +11,43 @@ Memory::Memory() {
 Memory::~Memory() {
     delete[] ram;
 
-    cartridge = NULL;
-    ram = NULL;
+    cartridge = nullptr;
+    ram = nullptr;
+}
+
+int Memory::getRomBankType(byte value) {
+    switch(value) {
+        case 0x01:
+        case 0x02:
+        case 0x03:
+            return ROM_BANK_MBC1;
+        case 0x05:
+        case 0x06:
+            return ROM_BANK_MBC2;
+        case 0x0F:
+        case 0x10:
+        case 0x11:
+        case 0x12:
+        case 0x13:
+            return ROM_BANK_MBC3;
+        case 0x19:
+        case 0x1A:
+        case 0x1B:
+        case 0x1C:
+        case 0x1D:
+        case 0x1E:
+            return ROM_BANK_MBC5;
+        case 0x20:
+            return ROM_BANK_MBC6;
+        case 0x22:
+            return ROM_BANK_MBC7;
+        default:
+            return ROM_BANK_NONE;
+    }
 }
 
 void Memory::setGpuCallback(std::function<void(word, byte, byte)> callback) {
-    gpuCallback = callback;
+    gpuCallback = std::move(callback);
 }
 
 byte Memory::readByte(word address) {
@@ -231,10 +263,6 @@ void Memory::loadRom(byte* rom) {
     romBankType = getRomBankType(cartridge[0x147]);
 }
 
-byte* Memory::getRom() {
-    return cartridge;
-}
-
 void Memory::updateDiv(byte value) {
     writeIO(IO_DIVIDER, value);
 }
@@ -300,37 +328,6 @@ void Memory::compareLY() {
     } else {
         // clear the coincidence flag
         writeIO(IO_LCD_STATUS, status | ~0x04);
-    }
-}
-
-int Memory::getRomBankType(byte value) {
-    switch(value) {
-        case 0x01:
-        case 0x02:
-        case 0x03:
-            return ROM_BANK_MBC1;
-        case 0x05:
-        case 0x06:
-            return ROM_BANK_MBC2;
-        case 0x0F:
-        case 0x10:
-        case 0x11:
-        case 0x12:
-        case 0x13:
-            return ROM_BANK_MBC3;
-        case 0x19:
-        case 0x1A:
-        case 0x1B:
-        case 0x1C:
-        case 0x1D:
-        case 0x1E:
-            return ROM_BANK_MBC5;
-        case 0x20:
-            return ROM_BANK_MBC6;
-        case 0x22:
-            return ROM_BANK_MBC7;
-        default:
-            return ROM_BANK_NONE;
     }
 }
 

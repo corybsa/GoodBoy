@@ -15,6 +15,19 @@ void Timers::reset() {
     TIMER_TIMA_GLITCH = false;
 }
 
+int Timers::getFrequency(int freq) {
+    switch(freq) {
+        case 0b00:
+            return TAC_CLOCK0;
+        case 0b01:
+            return TAC_CLOCK1;
+        case 0b10:
+            return TAC_CLOCK2;
+        case 0b11:
+            return TAC_CLOCK3;
+    }
+}
+
 void Timers::tick(int cycles) {
     incrementSystemCounter(cycles);
 
@@ -89,19 +102,6 @@ void Timers::tick(int cycles) {
 
             break;
         }
-    }
-}
-
-int Timers::getFrequency(int freq) {
-    switch(freq) {
-        case 0b00:
-            return TAC_CLOCK0;
-        case 0b01:
-            return TAC_CLOCK1;
-        case 0b10:
-            return TAC_CLOCK2;
-        case 0b11:
-            return TAC_CLOCK3;
     }
 }
 

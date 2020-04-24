@@ -9,11 +9,11 @@ class CPUTest : public Test {
 public:
     GameBoy* gb;
 
-    CPUTest(GameBoy* gameBoy);
+    explicit CPUTest(GameBoy* gameBoy);
 
-    void beforeAll();
-    void beforeEach();
-    void tearDown();
+    void beforeAll() override;
+    void beforeEach() override;
+    void tearDown() override;
 
     void setFlags();
     void resetFlags();

@@ -1,7 +1,7 @@
 #include "includes/types.h"
 #include "includes/registers.h"
 
-byte Registers::get8Bit(int reg) {
+byte Registers::get8Bit(int reg) const {
     switch(reg) {
         case 0b000:
             return B;
@@ -41,7 +41,7 @@ void Registers::set8Bit(int reg, byte value) {
     }
 }
 
-word Registers::get16Bit(int reg, bool useAF) {
+word Registers::get16Bit(int reg, bool useAF) const {
     switch(reg) {
         case 0b00:
             return BC;

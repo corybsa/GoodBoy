@@ -6,13 +6,14 @@
 
 DebugWindow::DebugWindow(GameBoy* gameBoy) {
     gb = gameBoy;
+    texture = nullptr;
+    count = 0;
 }
 
 bool DebugWindow::init(char* title, int w, int h) {
-    count = 0;
     bool success = Window::init(title, w, h);
 
-    if(success == false) {
+    if(!success) {
         return false;
     }
 
@@ -31,7 +32,7 @@ void DebugWindow::free() {
     Window::free();
 
     delete texture;
-    texture = NULL;
+    texture = nullptr;
 }
 
 void DebugWindow::askForBreakpoint() {
@@ -108,7 +109,7 @@ char* DebugWindow::byteToHex(char* info, byte value) {
 }
 
 char* DebugWindow::boolToHex(char* info, bool value) {
-    int length = strlen(info) + 1;
+    auto length = strlen(info) + 1;
     char* chars = new char[length];
     std::string s(info);
     s += (value ? '1' : '0');

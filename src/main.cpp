@@ -10,8 +10,13 @@
 byte* openFile(char* name);
 
 int main(int argc, char* args[]) {
-    GameBoy* gb = new GameBoy();
+    auto* gb = new GameBoy();
     byte* rom = openFile("./resources/roms/tests/mooneye/acceptance/instr/daa.gb");
+
+    if(rom == nullptr) {
+        return 1;
+    }
+
     gb->loadRom(rom);
     std::cout << gb->cartridge->toString();
 
@@ -73,7 +78,7 @@ int main(int argc, char* args[]) {
 
                             break;
                         case SDLK_F12:
-                            if(debugWindow.window == NULL) {
+                            if(debugWindow.window == nullptr) {
                                 if(!debugWindow.init("Debugger", 600, 480)) {
                                     printf("Debug window could not be created!\n");
                                     quit = true;
@@ -88,7 +93,7 @@ int main(int argc, char* args[]) {
             // update windows
             mainWindow.render();
 
-            if(debugWindow.window != NULL) {
+            if(debugWindow.window != nullptr) {
                 debugWindow.render();
             }
 
@@ -105,10 +110,7 @@ int main(int argc, char* args[]) {
     }
     
     delete[] rom;
-    rom = NULL;
-
     delete gb;
-    gb = NULL;
     
     mainWindow.free();
     debugWindow.free();
@@ -118,19 +120,31 @@ int main(int argc, char* args[]) {
 }
 
 byte* openFile(char* name) {
-    std::ifstream file(name);
+    std::ifstream file(name, std::ios_base::binary);
+
+    if(!file.is_open()) {
+        printf("file could not be opened!\n");
+        return nullptr;
+    }
+
+    if(file.bad()) {
+        printf("error reading file!\n");
+        return nullptr;
+    }
+
     file.seekg(0, std::ios::end);
     size_t length = file.tellg();
-    char* ret = new char[length];
+    char *ret = new char[length];
     file.seekg(0, std::ios::beg);
     file.read(ret, length);
     file.close();
 
-    byte* rom = new byte[0x800000];
+    byte *rom = new byte[0x800000];
 
     for(int i = 0; i < length; i++) {
         rom[i] = (byte)ret[i];
     }
 
+    delete[] ret;
     return rom;
 }

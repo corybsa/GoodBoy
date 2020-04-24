@@ -56,20 +56,11 @@ class Memory {
 private:
     byte* cartridge;
     byte* ram;
-    // byte* vram;
-    // byte* sram;
-    // byte* wram;
-    // byte* eram;
-    // byte* oam;
-    // byte* fea0_feff;
-    // byte* io;
-    // byte* hram;
-    // byte* ie;
 
     std::function<void(word, byte, byte)> gpuCallback;
 
 public:
-    int romBankType;
+    int romBankType = 0;
     int currentRomBank = 1;
     int currentRamBank = 0;
     bool isRamBankEnabled = false;
@@ -77,19 +68,18 @@ public:
     Memory();
     ~Memory();
 
-    void setGpuCallback(std::function<void(word, byte, byte)> callback);
+    static int getRomBankType(byte value);
 
+    void setGpuCallback(std::function<void(word, byte, byte)> callback);
     byte readByte(word address);
     void writeByte(word address, byte value);
     byte readIO(word address);
     void writeIO(word address, byte value);
     void loadRom(byte* rom);
-    byte* getRom();
     void updateDiv(byte value);
     int getTimerSystemBit();
     void incrementTima();
     void compareLY();
-    int getRomBankType(byte value);
     void writeBank(word address, byte value);
 };
 

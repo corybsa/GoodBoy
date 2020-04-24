@@ -17,7 +17,7 @@ MemoryTest::MemoryTest(GameBoy* gameBoy) {
 }
 
 void MemoryTest::beforeAll() {
-    
+    printf("\nMemory Tests running...");
 }
 
 void MemoryTest::beforeEach() {
@@ -39,7 +39,6 @@ void MemoryTest::romRange() {
     expect(gb->memory->readByte(0x7FFF), 0xEF, "The value at 0x7FFF should be 0xEF.");
 
     delete[] rom;
-    rom = NULL;
 }
 
 void MemoryTest::vramRange() {
