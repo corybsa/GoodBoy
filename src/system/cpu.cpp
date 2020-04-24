@@ -585,7 +585,7 @@ void CPU::doMiscOperation(int y, int z, int q, int p) {
         case 0b100: // 8-bit inc
             if(y == 0b110) { // inc (hl)
                 writeByte(registers.HL, increment(readByte(registers.HL)));
-                incrementCycles(8);
+                incrementCycles(12);
             } else { // inc [b, c, d, e, h, l, a]
                 registers.set8Bit(y, increment(registers.get8Bit(y)));
                 incrementCycles(4);
@@ -595,7 +595,7 @@ void CPU::doMiscOperation(int y, int z, int q, int p) {
         case 0b101: // 8-bit dec
             if(y == 0b110) { // dec (hl)
                 writeByte(registers.HL, decrement(readByte(registers.HL)));
-                incrementCycles(8);
+                incrementCycles(12);
             } else { // dec [b, c, d, e, h, l, a]
                 registers.set8Bit(y, decrement(registers.get8Bit(y)));
                 incrementCycles(4);
