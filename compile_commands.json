@@ -62,9 +62,9 @@
    "-pthread", 
    "-Iinclude/", 
    "-c", 
-   "src/system/cartridge.cpp", 
+   "test/system/memory.cpp", 
    "-o", 
-   "build/test/objects/src/system/cartridge.o", 
+   "build/test/objects/test/system/memory.o", 
    "-L/usr/lib", 
    "-lstdc++", 
    "-lm", 
@@ -72,7 +72,7 @@
    "-lSDL2_ttf", 
    "-lSDL2_image"
   ], 
-  "file": "src/system/cartridge.cpp"
+  "file": "test/system/memory.cpp"
  }, 
  {
   "directory": "/home/guy/CLionProjects/goodboy", 
@@ -487,9 +487,9 @@
    "-pthread", 
    "-Iinclude/", 
    "-c", 
-   "test/system/memory.cpp", 
+   "src/system/cartridge.cpp", 
    "-o", 
-   "build/test/objects/test/system/memory.o", 
+   "build/test/objects/src/system/cartridge.o", 
    "-L/usr/lib", 
    "-lstdc++", 
    "-lm", 
@@ -497,7 +497,7 @@
    "-lSDL2_ttf", 
    "-lSDL2_image"
   ], 
-  "file": "test/system/memory.cpp"
+  "file": "src/system/cartridge.cpp"
  }, 
  {
   "directory": "/home/guy/CLionProjects/goodboy", 
