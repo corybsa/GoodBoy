@@ -134,7 +134,8 @@ Instrs_00_3F::Instrs_00_3F(GameBoy *gameBoy) {
     Test::addTest([this]() -> void { test_0x3D_sub_half(); });
     Test::addTest([this]() -> void { test_0x3D_sub_half2(); });
     Test::addTest([this]() -> void { test_0x3E(); });
-    Test::addTest([this]() -> void { test_0x3F(); });
+    Test::addTest([this]() -> void { test_0x3F_set(); });
+    Test::addTest([this]() -> void { test_0x3F_reset(); });
 }
 
 void Instrs_00_3F::beforeAll() {
@@ -2034,24 +2035,167 @@ void Instrs_00_3F::test_0x3A() {
     expect(gb->cpu->cycles, 8, "should take 8 cycles");
 }
 
-void Instrs_00_3F::test_0x3B() {}
+// dec sp
+void Instrs_00_3F::test_0x3B() {
+    loadRom({
+                0x3B // dec sp
+            });
 
-void Instrs_00_3F::test_0x3C() {}
+    gb->cpu->registers.SP = 0xC000;
 
-void Instrs_00_3F::test_0x3C_half() {}
+    gb->cpu->tick();
 
-void Instrs_00_3F::test_0x3C_zero_half() {}
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.SP, 0xBFFF, "SP should be 0xBFFF");
+    expect(gb->cpu->cycles, 8, "should take 8 cycles");
+}
 
-void Instrs_00_3F::test_0x3D() {}
+// inc a
+void Instrs_00_3F::test_0x3C() {
+    loadRom({
+                0x3C // inc a
+            });
 
-void Instrs_00_3F::test_0x3D_zero_sub() {}
+    gb->cpu->registers.A = 0x00;
 
-void Instrs_00_3F::test_0x3D_sub_half() {}
+    gb->cpu->tick();
 
-void Instrs_00_3F::test_0x3D_sub_half2() {}
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.A, 0x01, "A should be 0x01");
+    expect(gb->cpu->registers.F, 0, "no flags should be set");
+    expect(gb->cpu->cycles, 4, "should take 4 cycles");
+}
 
-void Instrs_00_3F::test_0x3E() {}
+void Instrs_00_3F::test_0x3C_half() {
+    loadRom({
+                0x3C // inc a
+            });
 
-void Instrs_00_3F::test_0x3F() {}
+    gb->cpu->registers.A = 0x0F;
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.A, 0x10, "A should be 0x10");
+    expect(gb->cpu->registers.F, HALF, "HALF flag should be set");
+    expect(gb->cpu->cycles, 4, "should take 4 cycles");
+}
+
+void Instrs_00_3F::test_0x3C_zero_half() {
+    loadRom({
+                0x3C // inc a
+            });
+
+    gb->cpu->registers.A = 0xFF;
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.A, 0x00, "A should be 0x00");
+    expect(gb->cpu->registers.F, ZERO | HALF, "ZERO and HALF flags should be set");
+    expect(gb->cpu->cycles, 4, "should take 4 cycles");
+}
+
+// dec a
+void Instrs_00_3F::test_0x3D() {
+    loadRom({
+                0x3D // dec a
+            });
+
+    gb->cpu->registers.A = 0xFF;
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.A, 0xFE, "A should be 0xFE");
+    expect(gb->cpu->registers.F, SUB, "SUB flag should be set");
+    expect(gb->cpu->cycles, 4, "should take 4 cycles");
+}
+
+void Instrs_00_3F::test_0x3D_zero_sub() {
+    loadRom({
+                0x3D // dec a
+            });
+
+    gb->cpu->registers.A = 0x01;
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.A, 0x00, "A should be 0x00");
+    expect(gb->cpu->registers.F, ZERO | SUB, "ZERO and SUB flags should be set");
+    expect(gb->cpu->cycles, 4, "should take 4 cycles");
+}
+
+void Instrs_00_3F::test_0x3D_sub_half() {
+    loadRom({
+                0x3D // dec a
+            });
+
+    gb->cpu->registers.A = 0x10;
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.A, 0x0F, "A should be 0x0F");
+    expect(gb->cpu->registers.F, SUB | HALF, "SUB and HALF flags should be set");
+    expect(gb->cpu->cycles, 4, "should take 4 cycles");
+}
+
+void Instrs_00_3F::test_0x3D_sub_half2() {
+    loadRom({
+                0x3D // dec a
+            });
+
+    gb->cpu->registers.A = 0x00;
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.A, 0xFF, "A should be 0xFF");
+    expect(gb->cpu->registers.F, SUB | HALF, "SUB and HALF flags should be set");
+    expect(gb->cpu->cycles, 4, "should take 4 cycles");
+}
+
+// ld a, x
+void Instrs_00_3F::test_0x3E() {
+    loadRom({
+                0x3E, // ld a, $F3
+                0xF3
+            });
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x102, "PC should be 0x102");
+    expect(gb->cpu->registers.A, 0xF3, "A should be 0xF3");
+    expect(gb->cpu->cycles, 8, "should take 8 cycles");
+}
+
+// ccf
+void Instrs_00_3F::test_0x3F_set() {
+    loadRom({
+                0x3F // ccf
+            });
+
+    gb->cpu->resetFlags(CARRY);
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.F, CARRY, "CARRY flag should be set");
+    expect(gb->cpu->cycles, 4, "should take 4 cycles");
+}
+
+void Instrs_00_3F::test_0x3F_reset() {
+    loadRom({
+                0x3F // ccf
+            });
+
+    gb->cpu->setFlags(CARRY);
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x101, "PC should be 0x101");
+    expect(gb->cpu->registers.F, 0, "no flags should be set");
+    expect(gb->cpu->cycles, 4, "should take 4 cycles");
+}
 
 #pragma endregion

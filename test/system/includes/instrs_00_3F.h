@@ -149,7 +149,8 @@ public:
     void test_0x3D_sub_half();
     void test_0x3D_sub_half2();
     void test_0x3E();
-    void test_0x3F();
+    void test_0x3F_set();
+    void test_0x3F_reset();
 };
 
 
