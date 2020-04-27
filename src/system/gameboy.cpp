@@ -7,6 +7,7 @@ GameBoy::GameBoy() {
     lcd = new LCD(memory);
     gpu = new GPU(memory, lcd);
     cpu = new CPU(memory, gpu, timers);
+    cartridge = new Cartridge();
 
     memory->setGpuCallback([this](word address, byte byte1, byte byte2) -> void {
         gpu->updateTiles(address, byte1, byte2);
@@ -29,14 +30,14 @@ GameBoy::~GameBoy() {
     cpu = nullptr;
 }
 
-void GameBoy::reset() {
+void GameBoy::reset() const {
     cpu->reset();
     gpu->reset();
 }
 
 void GameBoy::loadRom(byte* rom) {
     reset();
-    cartridge = new Cartridge(rom);
+    cartridge->changeCartridge(rom);
     memory->loadRom(cartridge->rom);
     isCartLoaded = true;
     isCartChanged = true;
@@ -54,7 +55,7 @@ void GameBoy::run() {
     }
 }
 
-void GameBoy::tick() {
+void GameBoy::tick() const {
     if(!isCartLoaded) {
         return;
     }

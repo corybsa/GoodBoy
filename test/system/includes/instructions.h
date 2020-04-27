@@ -15,7 +15,7 @@ public:
     Instrs_80_BF* instrs_80_BF;
     Instrs_C0_FF* instrs_C0_FF;
 
-    explicit InstructionsTest(GameBoy *gameBoy);
+    explicit InstructionsTest(GameBoy* gameBoy);
 
     void run() const;
 };

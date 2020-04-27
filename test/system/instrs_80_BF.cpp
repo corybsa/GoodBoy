@@ -1,6 +1,6 @@
 #include "includes/instrs_80_BF.h"
 
-Instrs_80_BF::Instrs_80_BF(GameBoy *gameBoy) {
+Instrs_80_BF::Instrs_80_BF(GameBoy* gameBoy) {
     gb = gameBoy;
     rom = nullptr;
 }

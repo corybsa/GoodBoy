@@ -77,6 +77,9 @@ public:
     void test_0x74();
     void test_0x75();
     void test_0x76();
+    void test_0x76_halt_bug();
+    void test_0x76_halt_bug2();
+    void test_0x76_halt_bug_freeze();
     void test_0x77();
     void test_0x78();
     void test_0x79();

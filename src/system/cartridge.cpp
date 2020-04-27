@@ -2,7 +2,12 @@
 #include "includes/constants.h"
 #include <algorithm>
 
-Cartridge::Cartridge(byte *data) {
+Cartridge::~Cartridge() {
+    delete[] rom;
+    rom = nullptr;
+}
+
+void Cartridge::changeCartridge(byte* data) {
     std::copy(data, data + 0x800000, rom);
     isColor = rom[0x143] == 0x80;
     isSuper = rom[0x146] == 0x03;
@@ -17,11 +22,6 @@ Cartridge::Cartridge(byte *data) {
     parseDestinationCode();
     calculateHeaderChecksum();
     calculateGlobalChecksum();
-}
-
-Cartridge::~Cartridge() {
-    delete[] rom;
-    rom = nullptr;
 }
 
 std::string Cartridge::intToHex(word value) {

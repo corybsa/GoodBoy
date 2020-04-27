@@ -25,10 +25,10 @@ public:
     GameBoy();
     ~GameBoy();
 
-    void reset();
+    void reset() const;
     void loadRom(byte* rom);
     void run();
-    void tick();
+    void tick() const;
     void quit();
 };
 

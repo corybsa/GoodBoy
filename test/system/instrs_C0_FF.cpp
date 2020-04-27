@@ -1,6 +1,6 @@
 #include "includes/instrs_C0_FF.h"
 
-Instrs_C0_FF::Instrs_C0_FF(GameBoy *gameBoy) {
+Instrs_C0_FF::Instrs_C0_FF(GameBoy* gameBoy) {
     gb = gameBoy;
     rom = nullptr;
 }

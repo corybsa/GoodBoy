@@ -20,11 +20,11 @@ public:
     bool isColor;
     bool isSuper;
 
-    explicit Cartridge(byte *data);
     ~Cartridge();
 
     static std::string intToHex(word value);
 
+    void changeCartridge(byte* data);
     void parseTitle();
     void parseLicense();
     void parseType();

@@ -27,11 +27,13 @@ void CPU::reset() {
     cyclesSinceLastSync = 0;
     lastSyncTime = 0;
 
+    isRunning = false;
     ime = false;
     pendingEnableIME = false;
-
+    isStopped = false;
     isHalted = false;
     haltBug = false;
+    justHalted = false;
     
     writeByte(IO_TIMA, 0x00);
     writeByte(IO_TMA, 0x00);
@@ -69,7 +71,7 @@ void CPU::reset() {
     writeByte(IO_INTERRUPT_ENABLE, 0x00);
 
     gpu->reset();
-    timers->reset();
+    Timers::reset();
 }
 
 /*

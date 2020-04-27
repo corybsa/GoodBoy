@@ -1,6 +1,6 @@
 #include "includes/instrs_00_3F.h"
 
-Instrs_00_3F::Instrs_00_3F(GameBoy *gameBoy) {
+Instrs_00_3F::Instrs_00_3F(GameBoy* gameBoy) {
     gb = gameBoy;
     rom = nullptr;
 
