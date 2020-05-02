@@ -19,6 +19,11 @@ public:
     void resetFlags();
     void complexFlagLogic();
     void manipulateRegisters();
+    void vblankInterrupt();
+    void statInterrupt();
+    void timerInterrupt();
+    void serialInterrupt();
+    void joypadInterrupt();
     void nestedInterrupt();
 };
 

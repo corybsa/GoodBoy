@@ -343,92 +343,107 @@ void CPU::decodeCB(byte opCode) {
     switch(x) {
         case 0b00:
             switch(y) {
-                case 0b000: // rlc
+                case 0b000: // rlc [b, c, d, e, h, l, a] | 0xCB00, 0xCB01, 0xCB02, 0xCB03, 0xCB04, 0xCB05, 0xCB07
                     if(z != 0b110) {
                         registers.set8Bit(z, rlc(registers.get8Bit(z)));
-                    } else {
+                    } else { // rlc (hl) | 0xCB06
                         writeByte(registers.HL, rlc(readByte(registers.HL)));
                     }
 
                     break;
-                case 0b001: // rrc
+                case 0b001: // rrc [b, c, d, e, h, l, a] | 0xCB08, 0xCB09, 0xCB0A, 0xCB0B, 0xCB0C, 0xCB0E, 0xCB0F
                     if(z != 0b110) {
                         registers.set8Bit(z, rlc(registers.get8Bit(z)));
-                    } else {
+                    } else { // rrc (hl) | 0xCB0E
                         writeByte(registers.HL, rrc(readByte(registers.HL)));
                     }
 
                     break;
-                case 0b010: // rl
+                case 0b010: // rl [b, c, d, e, h, l, a] | 0xCB10, 0xCB11, 0xCB12, 0xCB13, 0xCB14, 0xCB15, 0xCB17
                     if(z != 0b110) {
                         registers.set8Bit(z, rl(registers.get8Bit(z)));
-                    } else {
+                    } else { // rl (hl) | 0xCB16
                         writeByte(registers.HL, rl(readByte(registers.HL)));
                     }
                     
                     break;
-                case 0b011: // rr
+                case 0b011: // rr [b, c, d, e, h, l, a] | 0xCB18, 0xCB19, 0xCB1A, 0xCB1B, 0xCB1C, 0xCB1E, 0xCB1F
                     if(z != 0b110) {
                         registers.set8Bit(z, rr(registers.get8Bit(z)));
-                    } else {
+                    } else { // rr (hl) | 0xCB1E
                         writeByte(registers.HL, rr(readByte(registers.HL)));
                     }
                     
                     break;
-                case 0b100: // sla
+                case 0b100: // sla [b, c, d, e, h, l, a] | 0xCB20, 0xCB21, 0xCB22, 0xCB23, 0xCB24, 0xCB25, 0xCB27
                     if(z != 0b110) {
                         registers.set8Bit(z, sla(registers.get8Bit(z)));
-                    } else {
+                    } else { // sla (hl) | 0xCB26
                         writeByte(registers.HL, sla(readByte(registers.HL)));
                     }
                     
                     break;
-                case 0b101: // sra
+                case 0b101: // sra [b, c, d, e, h, l, a] | 0xCB28, 0xCB29, 0xCB2A, 0xCB2B, 0xCB2C, 0xCB2E, 0xCB2F
                     if(z != 0b110) {
                         registers.set8Bit(z, sra(registers.get8Bit(z)));
-                    } else {
+                    } else { // sra (hl) | 0xCB2E
                         writeByte(registers.HL, sra(readByte(registers.HL)));
                     }
                     
                     break;
-                case 0b110: // swap
+                case 0b110: // swap [b, c, d, e, h, l, a] | 0xCB30, 0xCB31, 0xCB32, 0xCB33, 0xCB34, 0xCB35, 0xCB37
                     if(z != 0b110) {
                         registers.set8Bit(z, swap(registers.get8Bit(z)));
-                    } else {
+                    } else { // swap (hl) | 0xCB36
                         writeByte(registers.HL, swap(readByte(registers.HL)));
                     }
                     
                     break;
-                case 0b111: // srl
+                case 0b111: // srl [b, c, d, e, h, l, a] | 0xCB38, 0xCB39, 0xCB3A, 0xCB3B, 0xCB3C, 0xCB3E, 0xCB3F
                     if(z != 0b110) {
                         registers.set8Bit(z, srl(registers.get8Bit(z)));
-                    } else {
+                    } else { // srl (hl) | 0xCB3E
                         writeByte(registers.HL, srl(readByte(registers.HL)));
                     }
                     
                     break;
             }
             break;
-        case 0b01: // bit
+        case 0b01: // bit [0, 1, 2, 3, 4, 5, 6, 7], [b, c, d, e, h, l, a]
+            // 0xCB40, 0xCB41, 0xCB42, 0xCB43, 0xCB44, 0xCB45, 0xCB47, 0xCB48, 0xCB49, 0xCB4A, 0xCB4B, 0xCB4C, 0xCB4D, 0xCB4F
+            // 0xCB50, 0xCB51, 0xCB52, 0xCB53, 0xCB54, 0xCB55, 0xCB57, 0xCB58, 0xCB59, 0xCB5A, 0xCB5B, 0xCB5C, 0xCB5D, 0xCB5F
+            // 0xCB60, 0xCB61, 0xCB62, 0xCB63, 0xCB64, 0xCB65, 0xCB67, 0xCB68, 0xCB69, 0xCB6A, 0xCB6B, 0xCB6C, 0xCB6D, 0xCB6F
+            // 0xCB70, 0xCB71, 0xCB72, 0xCB73, 0xCB74, 0xCB75, 0xCB77, 0xCB78, 0xCB79, 0xCB7A, 0xCB7B, 0xCB7C, 0xCB7D, 0xCB7F
             if(z != 0b110) {
                 bit(y, registers.get8Bit(z));
-            } else {
+            } else { // bit [0, 1, 2, 3, 4, 5, 6, 7], (hl)
+                // 0xCB46, 0xCB4E, 0xCB56, 0xCB5E, 0xCB66, 0xCB6E, 0xCB76, 0xCB7E
                 bit(y, readByte(registers.HL));
             }
 
             break;
-        case 0b10: // res
+        case 0b10: // res [0, 1, 2, 3, 4, 5, 6, 7], [b, c, d, e, h, l, a]
+            // 0xCB80, 0xCB81, 0xCB82, 0xCB83, 0xCB84, 0xCB85, 0xCB87, 0xCB88, 0xCB89, 0xCB8A, 0xCB8B, 0xCB8C, 0xCB8D, 0xCB8F
+            // 0xCB90, 0xCB91, 0xCB92, 0xCB93, 0xCB94, 0xCB95, 0xCB97, 0xCB98, 0xCB99, 0xCB9A, 0xCB9B, 0xCB9C, 0xCB9D, 0xCB9F
+            // 0xCBA0, 0xCBA1, 0xCBA2, 0xCBA3, 0xCBA4, 0xCBA5, 0xCBA7, 0xCBA8, 0xCBA9, 0xCBAA, 0xCBAB, 0xCBAC, 0xCBAD, 0xCBAF
+            // 0xCBB0, 0xCBB1, 0xCBB2, 0xCBB3, 0xCBB4, 0xCBB5, 0xCBB7, 0xCBB8, 0xCBB9, 0xCBBA, 0xCBBB, 0xCBBC, 0xCBBD, 0xCBBF
             if(z != 0b110) {
                 registers.set8Bit(z, res(y, registers.get8Bit(z)));
-            } else {
+            } else { // res [0, 1, 2, 3, 4, 5, 6, 7], (hl)
+                // 0xCB86, 0xCB8E, 0xCB96, 0xCB9E, 0xCBA6, 0xCBAE, 0xCBB6, 0xCBBE
                 writeByte(registers.HL, res(y, readByte(registers.HL)));
             }
 
             break;
-        case 0b11: // set
+        case 0b11: // set [0, 1, 2, 3, 4, 5, 6, 7], [b, c, d, e, h, l, a]
+            // 0xCBC0, 0xCBC1, 0xCBC2, 0xCBC3, 0xCBC4, 0xCBC5, 0xCBC7, 0xCBC8, 0xCBC9, 0xCBCA, 0xCBCB, 0xCBCC, 0xCBCD, 0xCBCF
+            // 0xCBD0, 0xCBD1, 0xCBD2, 0xCBD3, 0xCBD4, 0xCBD5, 0xCBD7, 0xCBD8, 0xCBD9, 0xCBDA, 0xCBDB, 0xCBDC, 0xCBDD, 0xCBDF
+            // 0xCBE0, 0xCBE1, 0xCBE2, 0xCBE3, 0xCBE4, 0xCBE5, 0xCBE7, 0xCBE8, 0xCBE9, 0xCBEA, 0xCBEB, 0xCBEC, 0xCBED, 0xCBEF
+            // 0xCBF0, 0xCBF1, 0xCBF2, 0xCBF3, 0xCBF4, 0xCBF5, 0xCBF7, 0xCBF8, 0xCBF9, 0xCBFA, 0xCBFB, 0xCBFC, 0xCBFD, 0xCBFF
             if(z != 0b110) {
                 registers.set8Bit(z, set(y, registers.get8Bit(z)));
-            } else {
+            } else { // set [0, 1, 2, 3, 4, 5, 6, 7], (hl)
+                // 0xCBC6, 0xCBCE, 0xCBD6, 0xCBDE, 0xCBE6, 0xCBEE, 0xCBF6, 0xCBFE
                 writeByte(registers.HL, set(y, readByte(registers.HL)));
             }
 
@@ -450,29 +465,29 @@ void CPU::doMiscOperation(int y, int z, int q, int p) {
     switch(z) {
         case 0b000: // relative jumps and assorted ops
             switch(y) {
-                case 0b000: // nop
+                case 0b000: // nop | 0x00
                     incrementCycles(4);
 
                     break;
-                case 0b001: // ld (xx), sp
+                case 0b001: // ld (xx), sp | 0x08
                     writeByte(getWord(), registers.SP & 0xFF);
                     writeByte(getWord() + 1, registers.SP >> 8);
                     incrementCycles(20);
                     registers.PC += 2;
 
                     break;
-                case 0b010: // stop
+                case 0b010: // stop | 0x10
                     stop();
                     incrementCycles(4);
                     registers.PC += 1;
 
                     break;
-                case 0b011: // jr x
+                case 0b011: // jr x | 0x18
                     jumpRelative(getByte());
                     incrementCycles(12);
 
                     break;
-                case 0b100: // jr nz x
+                case 0b100: // jr nz x | 0x20
                     if((registers.F & ZERO) != ZERO) {
                         jumpRelative(getByte());
                         incrementCycles(12);
@@ -482,7 +497,7 @@ void CPU::doMiscOperation(int y, int z, int q, int p) {
                     }
 
                     break;
-                case 0b101: // jr z x
+                case 0b101: // jr z x | 0x28
                     if((registers.F & ZERO) == ZERO) {
                         jumpRelative(getByte());
                         incrementCycles(12);
@@ -492,7 +507,7 @@ void CPU::doMiscOperation(int y, int z, int q, int p) {
                     }
 
                     break;
-                case 0b110: // jr nc x
+                case 0b110: // jr nc x | 0x30
                     if((registers.F & CARRY) != CARRY) {
                         jumpRelative(getByte());
                         incrementCycles(12);
@@ -502,7 +517,7 @@ void CPU::doMiscOperation(int y, int z, int q, int p) {
                     }
 
                     break;
-                case 0b111: // jr c x
+                case 0b111: // jr c x | 0x38
                     if((registers.F & CARRY) == CARRY) {
                         jumpRelative(getByte());
                         incrementCycles(12);
@@ -516,11 +531,11 @@ void CPU::doMiscOperation(int y, int z, int q, int p) {
 
             break;
         case 0b001: // 16-bit immediate load/add
-            if(q == 0) { // add [bc, de, hl, sp], [bc, de, hl, sp]
+            if(q == 0) { // ld [bc, de, hl, sp], xx | 0x01, 0x11, 0x21, 0x31
                 registers.set16Bit(p, getWord(), false);
                 incrementCycles(12);
                 registers.PC += 2;
-            } else { // add hl, [bc, de, hl, sp]
+            } else { // add hl, [bc, de, hl, sp] | 0x09, 0x19, 0x29, 0x39
                 registers.HL = add16Bit(registers.HL, registers.get16Bit(p, false));
                 incrementCycles(8);
             }
@@ -529,20 +544,20 @@ void CPU::doMiscOperation(int y, int z, int q, int p) {
         case 0b010: // indirect loading
             if(q == 0) {
                 switch(p) {
-                    case 0b00: // ld (bc), a
+                    case 0b00: // ld (bc), a | 0x02
                         writeByte(registers.BC, registers.A);
 
                         break;
-                    case 0b01: // ld (de), a
+                    case 0b01: // ld (de), a | 0x12
                         writeByte(registers.DE, registers.A);
                         
                         break;
-                    case 0b10: // ld (hl+), a
+                    case 0b10: // ld (hl+), a | 0x22
                         writeByte(registers.HL, registers.A);
                         registers.HL++;
 
                         break;
-                    case 0b11: // ld (hl-), a
+                    case 0b11: // ld (hl-), a | 0x32
                         writeByte(registers.HL, registers.A);
                         registers.HL--;
 
@@ -550,20 +565,20 @@ void CPU::doMiscOperation(int y, int z, int q, int p) {
                 }
             } else {
                 switch(p) {
-                    case 0b00: // ld a, (bc)
+                    case 0b00: // ld a, (bc) | 0x0A
                         registers.A = readByte(registers.BC);
 
                         break;
-                    case 0b01: // ld a, (de)
+                    case 0b01: // ld a, (de) | 0x1A
                         registers.A = readByte(registers.DE);
 
                         break;
-                    case 0b10: // ld a, (hl+)
+                    case 0b10: // ld a, (hl+) | 0x2A
                         registers.A = readByte(registers.HL);
                         registers.HL++;
 
                         break;
-                    case 0b11: // ld a, (hl-)
+                    case 0b11: // ld a, (hl-) | 0x3A
                         registers.A = readByte(registers.HL);
                         registers.HL--;
 
@@ -575,9 +590,9 @@ void CPU::doMiscOperation(int y, int z, int q, int p) {
 
             break;
         case 0b011: // 16-bit inc/dec
-            if(q == 0) { // inc [bc, de, hl, sp]
+            if(q == 0) { // inc [bc, de, hl, sp] | 0x03, 0x13, 0x23, 0x33
                 registers.set16Bit(p, registers.get16Bit(p, false) + 1, false);
-            } else { // dev [bc, de, hl, sp]
+            } else { // dev [bc, de, hl, sp] | 0x0B, 0x1B, 0x2B, 0x3B
                 registers.set16Bit(p, registers.get16Bit(p, false) - 1, false);
             }
 
@@ -585,29 +600,29 @@ void CPU::doMiscOperation(int y, int z, int q, int p) {
 
             break;
         case 0b100: // 8-bit inc
-            if(y == 0b110) { // inc (hl)
+            if(y == 0b110) { // inc (hl) | 0x34
                 writeByte(registers.HL, increment(readByte(registers.HL)));
                 incrementCycles(12);
-            } else { // inc [b, c, d, e, h, l, a]
+            } else { // inc [b, c, d, e, h, l, a] | 0x04, 0x0C, 0x14, 0x1C, 0x24, 0x2C, 0x3C
                 registers.set8Bit(y, increment(registers.get8Bit(y)));
                 incrementCycles(4);
             }
 
             break;
         case 0b101: // 8-bit dec
-            if(y == 0b110) { // dec (hl)
+            if(y == 0b110) { // dec (hl) | 0x35
                 writeByte(registers.HL, decrement(readByte(registers.HL)));
                 incrementCycles(12);
-            } else { // dec [b, c, d, e, h, l, a]
+            } else { // dec [b, c, d, e, h, l, a] | 0x05, 0x0D, 0x15, 0x1D, 0x25, 0x2D, 0x3D
                 registers.set8Bit(y, decrement(registers.get8Bit(y)));
                 incrementCycles(4);
             }
 
             break;
         case 0b110: // load immediate 8-bit
-            if(y == 0b110) { // ld (hl), x
+            if(y == 0b110) { // ld (hl), x | 0x36
                 writeByte(registers.HL, getByte());
-            } else { // ld [b, c, d, e, h, l, a], x
+            } else { // ld [b, c, d, e, h, l, a], x | 0x06, 0x0E, 0x16, 0x1E, 0x26, 0x2E, 0x3E
                 registers.set8Bit(y, getByte());
             }
 
@@ -627,19 +642,21 @@ void CPU::doMiscOperation(int y, int z, int q, int p) {
  * Perform various load operations
  */
 void CPU::doLoadOperation(int y, int z) {
-    if(y == 0b110 && z == 0b110) { // halt
+    if(y == 0b110 && z == 0b110) { // halt | 0x76
         halt();
         incrementCycles(4);
-    } else if(y == z) { // nop
-        incrementCycles(4);
     } else {
-        if(z == 0b110) { // ld [b, c, d, e, h, l, a], (hl)
+        if(z == 0b110) { // ld [b, c, d, e, h, l, a], (hl) | 0x46, 0x4E, 0x56, 0x5E, 0x66, 0x6E, 0x7E
             registers.set8Bit(y, readByte(registers.HL));
             incrementCycles(8);
-        } else if(y == 0b110) { // ld (hl), [b, c, d, e, h, l, a]
+        } else if(y == 0b110) { // ld (hl), [b, c, d, e, h, l, a] | 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x77
             writeByte(registers.HL, registers.get8Bit(z));
             incrementCycles(8);
         } else { // ld [b, c, d, e, h, l, a], [b, c, d, e, h, l, a]
+            // 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4F
+            // 0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x57, 0x58, 0x59, 0x5A, 0x5B, 0x5C, 0x5D, 0x5F
+            // 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0x6D, 0x6F
+            // 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x7F
             registers.set8Bit(y, registers.get8Bit(z));
             incrementCycles(4);
         }
@@ -652,80 +669,80 @@ void CPU::doLoadOperation(int y, int z) {
 void CPU::doMathOperation(int y, int z) {
     switch(y) {
         case 0b000: // add
-            if(z !=0b110) { // add a, [b, c, d, e, h, l, a]
+            if(z !=0b110) { // add a, [b, c, d, e, h, l, a] | 0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x87
                 registers.A = add8Bit(registers.A, registers.get8Bit(z));
                 incrementCycles(4);
-            } else { // add a, (hl)
+            } else { // add a, (hl) | 0x86
                 registers.A = add8Bit(registers.A, readByte(registers.HL));
                 incrementCycles(8);
             }
 
             break;
         case 0b001: // adc
-            if(z !=0b110) { // adc a, [b, c, d, e, h, l, a]
+            if(z !=0b110) { // adc a, [b, c, d, e, h, l, a] | 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8F
                 registers.A = adc(registers.A, registers.get8Bit(z));
                 incrementCycles(4);
-            } else { // adc a, (hl)
+            } else { // adc a, (hl) | 0x8E
                 registers.A = adc(registers.A, readByte(registers.HL));
                 incrementCycles(8);
             }
 
             break;
         case 0b010: // sub
-            if(z !=0b110) { // sub a, [b, c, d, e, h, l, a]
+            if(z !=0b110) { // sub [b, c, d, e, h, l, a] | 0x90, 0x91, 0x92, 0x93, 0x94, 0x95, 0x97
                 registers.A = sub(registers.A, registers.get8Bit(z));
                 incrementCycles(4);
-            } else { // sub a, (hl)
+            } else { // sub (hl) | 0x96
                 registers.A = sub(registers.A, readByte(registers.HL));
                 incrementCycles(8);
             }
 
             break;
         case 0b011: // sbc
-            if(z !=0b110) { // sbc a, [b, c, d, e, h, l, a]
+            if(z !=0b110) { // sbc a, [b, c, d, e, h, l, a] | 0x98, 0x99, 0x9A, 0x9B, 0x9C, 0x9D, 0x9F
                 registers.A = sbc(registers.A, registers.get8Bit(z));
                 incrementCycles(4);
-            } else { // sbc a, (hl)
+            } else { // sbc a, (hl) | 0x9E
                 registers.A = sbc(registers.A, readByte(registers.HL));
                 incrementCycles(8);
             }
 
             break;
         case 0b100: // and
-            if(z !=0b110) { // bitwiseAnd a, [b, c, d, e, h, l, a]
+            if(z !=0b110) { // and [b, c, d, e, h, l, a] | 0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA7
                 registers.A = bitwiseAnd(registers.A, registers.get8Bit(z));
                 incrementCycles(4);
-            } else { // bitwiseAnd a, (hl)
+            } else { // and (hl) | 0xA6
                 registers.A = bitwiseAnd(registers.A, readByte(registers.HL));
                 incrementCycles(8);
             }
 
             break;
         case 0b101: // xor
-            if(z !=0b110) { // bitwiseXor a, [b, c, d, e, h, l, a]
+            if(z !=0b110) { // xor [b, c, d, e, h, l, a] | 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAF
                 registers.A = bitwiseXor(registers.A, registers.get8Bit(z));
                 incrementCycles(4);
-            } else { // bitwiseXor a, (hl)
+            } else { // xor (hl) | 0xAE
                 registers.A = bitwiseXor(registers.A, readByte(registers.HL));
                 incrementCycles(8);
             }
 
             break;
         case 0b110: // or
-            if(z !=0b110) { // bitwiseOr a, [b, c, d, e, h, l, a]
+            if(z !=0b110) { // or [b, c, d, e, h, l, a] | 0xB0, 0xB1, 0xB2, 0xB3, 0xB4, 0xB5, 0xB7
                 registers.A = bitwiseOr(registers.A, registers.get8Bit(z));
                 incrementCycles(4);
-            } else { // bitwiseOr a, (hl)
+            } else { // or (hl) | 0xB6
                 registers.A = bitwiseOr(registers.A, readByte(registers.HL));
                 incrementCycles(8);
             }
 
             break;
         case 0b111: // cp
-            if(z !=0b110) { // cp a, [b, c, d, e, h, l, a]
+            if(z !=0b110) { // cp [b, c, d, e, h, l, a] | 0xB8, 0xB9, 0xBA, 0xBB, 0xBC, 0xBD, 0xBF
                 cp(registers.A, registers.get8Bit(z));
                 incrementCycles(4);
-            } else { // cp a, (hl)
+            } else { // cp (hl) | 0xBE
                 cp(registers.A, readByte(registers.HL));
                 incrementCycles(8);
             }
@@ -744,7 +761,7 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
     switch(z) {
         case 0b000: // conditional return
             switch(y) {
-                case 0b000: // ret nz
+                case 0b000: // ret nz | 0xC0
                     if((registers.F & ZERO) != ZERO) {
                         registers.PC = combineBytes(high, low);
                         registers.SP += 2;
@@ -754,7 +771,7 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
                     }
 
                     break;
-                case 0b001: // ret z
+                case 0b001: // ret z | 0xC8
                     if((registers.F & ZERO) == ZERO) {
                         registers.PC = combineBytes(high, low);
                         registers.SP += 2;
@@ -764,7 +781,7 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
                     }
 
                     break;
-                case 0b010: // ret nc
+                case 0b010: // ret nc | 0xD0
                     if((registers.F & CARRY) != CARRY) {
                         registers.PC = combineBytes(high, low);
                         registers.SP += 2;
@@ -774,7 +791,7 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
                     }
 
                     break;
-                case 0b011: // ret c
+                case 0b011: // ret c | 0xD8
                     if((registers.F & CARRY) == CARRY) {
                         registers.PC = combineBytes(high, low);
                         registers.SP += 2;
@@ -784,26 +801,26 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
                     }
 
                     break;
-                case 0b100: // ld (x), a
+                case 0b100: // ldh (x), a | 0xE0
                     writeByte(0xFF00 | getByte(), registers.A);
                     incrementCycles(12);
                     registers.PC += 1;
 
                     break;
-                case 0b101: // add sp, x
+                case 0b101: // add sp, x | 0xE8
                     registers.SP = add16Bit(registers.SP, getByte());
                     setFlags(ZERO);
                     incrementCycles(16);
                     registers.PC += 1;
 
                     break;
-                case 0b110: // ld a, (x)
+                case 0b110: // ldh a, (x) | 0xF0
                     registers.A = readByte(0xFF00 | getByte());
                     incrementCycles(12);
                     registers.PC += 1;
 
                     break;
-                case 0b111: // ld hl, sp+x
+                case 0b111: // ld hl, sp+x | 0xF8
                     byte op = getByte();
                     word result = registers.SP + op;
 
@@ -831,31 +848,31 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
 
             break;
         case 0b001: // pop & various ops
-            if(q == 0) { // pop [bc, de, hl, af]
+            if(q == 0) { // pop [bc, de, hl, af] | 0xC1, 0xD1, 0xE1, 0xF1
                 registers.set16Bit(p, combineBytes(high, low), true);
                 registers.SP += 2;
                 incrementCycles(12);
             } else {
                 switch(p) {
-                    case 0b00: // ret
+                    case 0b00: // ret | 0xC9
                         registers.PC = combineBytes(high, low);
                         registers.SP += 2;
                         incrementCycles(16);
 
                         break;
-                    case 0b01: // reti
+                    case 0b01: // reti | 0xD9
                         registers.PC = combineBytes(high, low);
                         registers.SP += 2;
                         ime = true;
                         incrementCycles(16);
 
                         break;
-                    case 0b10: // jp hl
+                    case 0b10: // jp hl | 0xE9
                         registers.PC = registers.HL;
                         incrementCycles(4);
 
                         break;
-                    case 0b11: // ld sp, hl
+                    case 0b11: // ld sp, hl | 0xF9
                         registers.SP = registers.HL;
                         incrementCycles(8);
 
@@ -867,7 +884,7 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
         case 0b010: // conditional jump
             if((p >> 1) == 0) {
                 switch(y) {
-                    case 0b000: // jp nz xx
+                    case 0b000: // jp nz xx | 0xC2
                         if((registers.F & ZERO) != ZERO) {
                             registers.PC = getWord() - 2;
                             incrementCycles(16);
@@ -876,7 +893,7 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
                         }
 
                         break;
-                    case 0b001: // jp z xx
+                    case 0b001: // jp z xx | 0xCA
                         if((registers.F & ZERO) == ZERO) {
                             registers.PC = getWord() - 2;
                             incrementCycles(16);
@@ -885,7 +902,7 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
                         }
 
                         break;
-                    case 0b010: // jp nc xx
+                    case 0b010: // jp nc xx | 0xD2
                         if((registers.F & CARRY) != CARRY) {
                             registers.PC = getWord() - 2;
                             incrementCycles(16);
@@ -894,7 +911,7 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
                         }
 
                         break;
-                    case 0b011: // jp c xx
+                    case 0b011: // jp c xx | 0xDA
                         if((registers.F & CARRY) == CARRY) {
                             registers.PC = getWord() - 2;
                             incrementCycles(16);
@@ -908,23 +925,23 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
                 registers.PC += 2;
             } else {
                 switch(y) {
-                    case 0b100: // ld (c), a
+                    case 0b100: // ld (c), a | 0xE2
                         writeByte(0xFF00 | registers.C, registers.A);
                         incrementCycles(8);
 
                         break;
-                    case 0b101: // ld (xx), a
+                    case 0b101: // ld (xx), a | 0xEA
                         writeByte(getWord(), registers.A);
                         incrementCycles(16);
                         registers.PC += 2;
 
                         break;
-                    case 0b110: // ld a, (c)
+                    case 0b110: // ld a, (c) | 0xF2
                         registers.A = readByte(0xFF00 | registers.C);
                         incrementCycles(8);
 
                         break;
-                    case 0b111: // ld a, (xx)
+                    case 0b111: // ld a, (xx) | 0xFA
                         registers.A = readByte(getWord());
                         incrementCycles(16);
                         registers.PC += 2;
@@ -936,30 +953,30 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
             break;
         case 0b011: // assorted operations
             switch(y) {
-                case 0b000: // jp xx
+                case 0b000: // jp xx | 0xC3
                     registers.PC = getWord();
                     incrementCycles(16);
 
                     break;
-                case 0b001: // cb-prefixed operations
+                case 0b001: // cb-prefixed operations | 0xCB
                     decodeCB(readByte(registers.PC++));
 
                     break;
-                case 0b010: // nop
-                case 0b011: // nop
-                case 0b100: // nop
-                case 0b101: // nop
-                    incrementCycles(4);
+                case 0b010: // illegal opcode | 0xD3
+                case 0b011: // illegal opcode | 0xDB
+                case 0b100: // illegal opcode | 0xE3
+                case 0b101: // illegal opcode | 0xEB
+                    illegalOpcode();
 
                     break;
-                case 0b110: // di
+                case 0b110: // di | 0xF3
                     // di immediately disables the IME and cancels any pending enabled caused by ei
                     ime = false;
                     pendingEnableIME = false;
                     incrementCycles(4);
 
                     break;
-                case 0b111: // ei
+                case 0b111: // ei | 0xFB
                     // ei takes an extra cycle for the ime to be enabled
                     pendingEnableIME = true;
                     incrementCycles(4);
@@ -970,7 +987,7 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
             break;
         case 0b100: // conditional calls
             switch(y) {
-                case 0b000: // call nz xx
+                case 0b000: // call nz xx | 0xC4
                     if((registers.F & ZERO) != ZERO) {
                         call();
                     } else {
@@ -979,7 +996,7 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
                     }
 
                     break;
-                case 0b001: // call z xx
+                case 0b001: // call z xx | 0xCC
                     if((registers.F & ZERO) == ZERO) {
                         call();
                     } else {
@@ -988,7 +1005,7 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
                     }
 
                     break;
-                case 0b010: // call nc xx
+                case 0b010: // call nc xx | 0xD4
                     if((registers.F & CARRY) != CARRY) {
                         call();
                     } else {
@@ -997,7 +1014,7 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
                     }
 
                     break;
-                case 0b011: // call c xx
+                case 0b011: // call c xx | 0xDC
                     if((registers.F & CARRY) == CARRY) {
                         call();
                     } else {
@@ -1006,61 +1023,61 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
                     }
 
                     break;
-                case 0b100: // nop
-                case 0b101: // nop
-                case 0b110: // nop
-                case 0b111: // nop
-                    incrementCycles(4);
+                case 0b100: // illegal opcode | 0xE4
+                case 0b101: // illegal opcode | 0xEC
+                case 0b110: // illegal opcode | 0xF4
+                case 0b111: // illegal opcode | 0xFC
+                    illegalOpcode();
 
                     break;
             }
 
             break;
         case 0b101: // push & various ops
-            if(q == 0) { // push [bc, de, hl, af]
+            if(q == 0) { // push [bc, de, hl, af] | 0xC5, 0xD5, 0xE5, 0xF5
                 writeByte(registers.SP - 1, (registers.get16Bit(p, true) >> 8) & 0xFF);
                 writeByte(registers.SP - 2, registers.get16Bit(p, true) & 0xFF);
                 incrementCycles(16);
             } else {
-                if(p == 0) { // call xx
+                if(p == 0) { // call xx | 0xCD
                     call();
-                } else { // nop
-                    incrementCycles(4);
+                } else { // illegal opcode | 0xED, 0xFD
+                    illegalOpcode();
                 }
             }
 
             break;
         case 0b110: // operate on accumulator and immediate operand
             switch(y) {
-                case 0b000: // add a, x
+                case 0b000: // add a, x | 0xC6
                     registers.A = add8Bit(registers.A, getByte());
 
                     break;
-                case 0b001: // adc a, x
+                case 0b001: // adc a, x | 0xCE
                     registers.A = adc(registers.A, getByte());
 
                     break;
-                case 0b010: // sub a, x
+                case 0b010: // sub a, x | 0xD6
                     registers.A = sub(registers.A, getByte());
 
                     break;
-                case 0b011: // sbc a, x
+                case 0b011: // sbc a, x | 0xDE
                     registers.A = sbc(registers.A, getByte());
 
                     break;
-                case 0b100: // and a, x
+                case 0b100: // and a, x | 0xE6
                     registers.A = bitwiseAnd(registers.A, getByte());
 
                     break;
-                case 0b101: // xor a, x
+                case 0b101: // xor a, x | 0xEE
                     registers.A = bitwiseXor(registers.A, getByte());
 
                     break;
-                case 0b110: // or a, x
+                case 0b110: // or a, x | 0xF6
                     registers.A = bitwiseOr(registers.A, getByte());
 
                     break;
-                case 0b111: // cp a, x
+                case 0b111: // cp a, x | 0xFE
                     cp(registers.A, getByte());
 
                     break;
@@ -1069,7 +1086,7 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
             incrementCycles(8);
 
             break;
-        case 0b111: // reset
+        case 0b111: // reset | 0xC7, 0xCF, 0xD7, 0xDF, 0xE7, 0xEF, 0xF7, 0xFF
             rst(y * 8);
             incrementCycles(16);
 
@@ -1082,35 +1099,35 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
  */
 void CPU::doLogicOperation(int y) {
     switch(y) {
-        case 0b000: // rlca
+        case 0b000: // rlca | 0x07
             rlca();
 
             break;
-        case 0b001: // rrca
+        case 0b001: // rrca | 0x0F
             rrca();
 
             break;
-        case 0b010: // rla
+        case 0b010: // rla | 0x17
             rla();
 
             break;
-        case 0b011: // rra
+        case 0b011: // rra | 0x1F
             rra();
 
             break;
-        case 0b100: // daa
+        case 0b100: // daa | 0x27
             daa();
 
             break;
-        case 0b101: // cpl
+        case 0b101: // cpl | 0x2F
             cpl();
 
             break;
-        case 0b110: // scf
+        case 0b110: // scf | 0x37
             scf();
 
             break;
-        case 0b111: // ccf
+        case 0b111: // ccf | 0x3F
             ccf();
 
             break;
@@ -1851,4 +1868,9 @@ void CPU::halt() {
     }
 
     justHalted = true;
+}
+
+void CPU::illegalOpcode() {
+    ime = false;
+    isHalted = true;
 }

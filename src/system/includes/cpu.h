@@ -107,6 +107,7 @@ private:
     void rst(word address);
     void stop();
     void halt();
+    void illegalOpcode();
 
 public:
     Registers registers;

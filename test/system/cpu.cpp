@@ -7,6 +7,11 @@ CPUTest::CPUTest(GameBoy* gameBoy) {
     Test::addTest([this]() -> void { resetFlags(); });
     Test::addTest([this]() -> void { complexFlagLogic(); });
     Test::addTest([this]() -> void { manipulateRegisters(); });
+    Test::addTest([this]() -> void { vblankInterrupt(); });
+    Test::addTest([this]() -> void { statInterrupt(); });
+    Test::addTest([this]() -> void { timerInterrupt(); });
+    Test::addTest([this]() -> void { serialInterrupt(); });
+    Test::addTest([this]() -> void { joypadInterrupt(); });
     Test::addTest([this]() -> void { nestedInterrupt(); });
 }
 
@@ -102,8 +107,103 @@ void CPUTest::manipulateRegisters() {
     expect(gb->cpu->registers.L, 0x88, "The L register should equal 0x88.");
 }
 
-void CPUTest::nestedInterrupt() {
+void CPUTest::vblankInterrupt() {
     byte* rom = new byte[0x800000];
+    rom[0x100] = 0x00; // nop
+
+    gb->loadRom(rom);
+
+    // enable vblank interrupt
+    gb->cpu->ime = true;
+    gb->memory->writeIO(IO_INTERRUPT_FLAGS, INTERRUPT_VBLANK);
+    gb->memory->writeIO(IO_INTERRUPT_ENABLE, INTERRUPT_VBLANK);
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x40, "should redirect PC to 0x40");
+    expect(gb->cpu->cycles, 20, "should take 20 cycles");
+
+    delete[] rom;
+}
+
+void CPUTest::statInterrupt() {
+    byte* rom = new byte[0x800000];
+    rom[0x100] = 0x00; // nop
+
+    gb->loadRom(rom);
+
+    // enable stat interrupt
+    gb->cpu->ime = true;
+    gb->memory->writeIO(IO_INTERRUPT_FLAGS, INTERRUPT_LCD_STAT);
+    gb->memory->writeIO(IO_INTERRUPT_ENABLE, INTERRUPT_LCD_STAT);
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x48, "should redirect PC to 0x48");
+    expect(gb->cpu->cycles, 20, "should take 20 cycles");
+
+    delete[] rom;
+}
+
+void CPUTest::timerInterrupt() {
+    byte* rom = new byte[0x800000];
+    rom[0x100] = 0x00; // nop
+
+    gb->loadRom(rom);
+
+    // enable timer interrupt
+    gb->cpu->ime = true;
+    gb->memory->writeIO(IO_INTERRUPT_FLAGS, INTERRUPT_TIMER);
+    gb->memory->writeIO(IO_INTERRUPT_ENABLE, INTERRUPT_TIMER);
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x50, "should redirect PC to 0x50");
+    expect(gb->cpu->cycles, 20, "should take 20 cycles");
+
+    delete[] rom;
+}
+
+void CPUTest::serialInterrupt() {
+    byte* rom = new byte[0x800000];
+    rom[0x100] = 0x00; // nop
+
+    gb->loadRom(rom);
+
+    // enable serial interrupt
+    gb->cpu->ime = true;
+    gb->memory->writeIO(IO_INTERRUPT_FLAGS, INTERRUPT_SERIAL);
+    gb->memory->writeIO(IO_INTERRUPT_ENABLE, INTERRUPT_SERIAL);
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x58, "should redirect PC to 0x58");
+    expect(gb->cpu->cycles, 20, "should take 20 cycles");
+
+    delete[] rom;
+}
+
+void CPUTest::joypadInterrupt() {
+    byte* rom = new byte[0x800000];
+    rom[0x100] = 0x00; // nop
+
+    gb->loadRom(rom);
+
+    // enable joypad interrupt
+    gb->cpu->ime = true;
+    gb->memory->writeIO(IO_INTERRUPT_FLAGS, INTERRUPT_JOYPAD);
+    gb->memory->writeIO(IO_INTERRUPT_ENABLE, INTERRUPT_JOYPAD);
+
+    gb->cpu->tick();
+
+    expect(gb->cpu->registers.PC, 0x60, "should redirect PC to 0x60");
+    expect(gb->cpu->cycles, 20, "should take 20 cycles");
+
+    delete[] rom;
+}
+
+void CPUTest::nestedInterrupt() {
+    byte* rom = new byte[0x8000];
     
     // vblank interrupt
     rom[0x40] = 0x3E; // ld a, 0x42
@@ -188,5 +288,4 @@ void CPUTest::nestedInterrupt() {
     expect(gb->cpu->isHalted, true, "should halt the cpu");
 
     delete[] rom;
-    rom = nullptr;
 }
