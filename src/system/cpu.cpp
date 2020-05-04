@@ -808,7 +808,7 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
 
                     break;
                 case 0b101: // add sp, x | 0xE8
-                    registers.SP = add16Bit(registers.SP, getByte());
+                    registers.SP = add16Bit(registers.SP, (int8_t)getByte());
                     setFlags(ZERO);
                     incrementCycles(16);
                     registers.PC += 1;
@@ -884,7 +884,7 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
         case 0b010: // conditional jump
             if((p >> 1) == 0) {
                 switch(y) {
-                    case 0b000: // jp nz xx | 0xC2
+                    case 0b000: // jp nz, xx | 0xC2
                         if((registers.F & ZERO) != ZERO) {
                             registers.PC = getWord() - 2;
                             incrementCycles(16);
@@ -893,7 +893,7 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
                         }
 
                         break;
-                    case 0b001: // jp z xx | 0xCA
+                    case 0b001: // jp z, xx | 0xCA
                         if((registers.F & ZERO) == ZERO) {
                             registers.PC = getWord() - 2;
                             incrementCycles(16);
@@ -902,7 +902,7 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
                         }
 
                         break;
-                    case 0b010: // jp nc xx | 0xD2
+                    case 0b010: // jp nc, xx | 0xD2
                         if((registers.F & CARRY) != CARRY) {
                             registers.PC = getWord() - 2;
                             incrementCycles(16);
@@ -911,7 +911,7 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
                         }
 
                         break;
-                    case 0b011: // jp c xx | 0xDA
+                    case 0b011: // jp c, xx | 0xDA
                         if((registers.F & CARRY) == CARRY) {
                             registers.PC = getWord() - 2;
                             incrementCycles(16);
@@ -1084,6 +1084,7 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
             }
 
             incrementCycles(8);
+            registers.PC++;
 
             break;
         case 0b111: // reset | 0xC7, 0xCF, 0xD7, 0xDF, 0xE7, 0xEF, 0xF7, 0xFF
@@ -1148,6 +1149,7 @@ void CPU::call() {
     writeByte(registers.SP - 1, ((registers.PC + 2) >> 8) & 0xFF);
     writeByte(registers.SP - 2, (registers.PC + 2) & 0xFF);
     registers.PC = getWord();
+    registers.SP -= 2;
     incrementCycles(24);
 }
 
@@ -1823,6 +1825,7 @@ void CPU::rst(word address) {
     writeByte(registers.SP - 1, (registers.PC >> 8) & 0xFF);
     writeByte(registers.SP - 2, registers.PC & 0xFF);
     registers.PC = address;
+    registers.SP -= 2;
 }
 
 /**
