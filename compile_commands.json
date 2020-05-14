@@ -62,6 +62,31 @@
    "-pthread", 
    "-Iinclude/", 
    "-c", 
+   "test/system/instrs_CB40_CB7F.cpp", 
+   "-o", 
+   "build/test/objects/test/system/instrs_CB40_CB7F.o", 
+   "-L/usr/lib", 
+   "-lstdc++", 
+   "-lm", 
+   "-lSDL2", 
+   "-lSDL2_ttf", 
+   "-lSDL2_image"
+  ], 
+  "file": "test/system/instrs_CB40_CB7F.cpp"
+ }, 
+ {
+  "directory": "/home/guy/CLionProjects/goodboy", 
+  "arguments": [
+   "g++", 
+   "-w", 
+   "-Wall", 
+   "-Wextra", 
+   "-Werror", 
+   "-pedantic-errors", 
+   "-fpermissive", 
+   "-pthread", 
+   "-Iinclude/", 
+   "-c", 
    "test/system/memory.cpp", 
    "-o", 
    "build/test/objects/test/system/memory.o", 
@@ -73,6 +98,31 @@
    "-lSDL2_image"
   ], 
   "file": "test/system/memory.cpp"
+ }, 
+ {
+  "directory": "/home/guy/CLionProjects/goodboy", 
+  "arguments": [
+   "g++", 
+   "-w", 
+   "-Wall", 
+   "-Wextra", 
+   "-Werror", 
+   "-pedantic-errors", 
+   "-fpermissive", 
+   "-pthread", 
+   "-Iinclude/", 
+   "-c", 
+   "test/system/instrs_CB00_CB3F.cpp", 
+   "-o", 
+   "build/test/objects/test/system/instrs_CB00_CB3F.o", 
+   "-L/usr/lib", 
+   "-lstdc++", 
+   "-lm", 
+   "-lSDL2", 
+   "-lSDL2_ttf", 
+   "-lSDL2_image"
+  ], 
+  "file": "test/system/instrs_CB00_CB3F.cpp"
  }, 
  {
   "directory": "/home/guy/CLionProjects/goodboy", 
@@ -262,6 +312,31 @@
    "-pthread", 
    "-Iinclude/", 
    "-c", 
+   "test/system/instrs_CB80_CBBF.cpp", 
+   "-o", 
+   "build/test/objects/test/system/instrs_CB80_CBBF.o", 
+   "-L/usr/lib", 
+   "-lstdc++", 
+   "-lm", 
+   "-lSDL2", 
+   "-lSDL2_ttf", 
+   "-lSDL2_image"
+  ], 
+  "file": "test/system/instrs_CB80_CBBF.cpp"
+ }, 
+ {
+  "directory": "/home/guy/CLionProjects/goodboy", 
+  "arguments": [
+   "g++", 
+   "-w", 
+   "-Wall", 
+   "-Wextra", 
+   "-Werror", 
+   "-pedantic-errors", 
+   "-fpermissive", 
+   "-pthread", 
+   "-Iinclude/", 
+   "-c", 
    "test/system/instrs_00_3F.cpp", 
    "-o", 
    "build/test/objects/test/system/instrs_00_3F.o", 
@@ -348,6 +423,31 @@
    "-lSDL2_image"
   ], 
   "file": "test/system/test.cpp"
+ }, 
+ {
+  "directory": "/home/guy/CLionProjects/goodboy", 
+  "arguments": [
+   "g++", 
+   "-w", 
+   "-Wall", 
+   "-Wextra", 
+   "-Werror", 
+   "-pedantic-errors", 
+   "-fpermissive", 
+   "-pthread", 
+   "-Iinclude/", 
+   "-c", 
+   "test/system/instrs_CBC0_CBFF.cpp", 
+   "-o", 
+   "build/test/objects/test/system/instrs_CBC0_CBFF.o", 
+   "-L/usr/lib", 
+   "-lstdc++", 
+   "-lm", 
+   "-lSDL2", 
+   "-lSDL2_ttf", 
+   "-lSDL2_image"
+  ], 
+  "file": "test/system/instrs_CBC0_CBFF.cpp"
  }, 
  {
   "directory": "/home/guy/CLionProjects/goodboy", 

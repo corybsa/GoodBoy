@@ -310,11 +310,11 @@ void CPU::decode(byte opCode) {
         haltBug = false;
     }
 
-    int x = opCode >> 6;
-    int y = (opCode & 0b00111000) >> 3;
-    int z = opCode & 0b00000111;
-    int p = y >> 1;
-    int q = y % 2;
+    int x = opCode >> 6; // the opcode's 1st octal digit (i.e. bits 7-6)
+    int y = (opCode & 0b00111000) >> 3; // the opcode's 2nd octal digit (i.e. bits 5-3)
+    int z = opCode & 0b00000111; // the opcode's 3rd octal digit (i.e. bits 2-0)
+    int p = y >> 1; // y rightshifted one position (i.e. bits 5-4)
+    int q = y % 2; // y modulo 2 (i.e. bit 3)
 
     switch(x) {
         case 0b00:
@@ -336,9 +336,9 @@ void CPU::decode(byte opCode) {
  * Decode CB-prefixed op code to find out which instruction to execute.
  */
 void CPU::decodeCB(byte opCode) {
-    int x = opCode >> 6;
-    int y = (opCode & 0b00111000) >> 3;
-    int z = opCode & 0b00000111;
+    int x = opCode >> 6; // the opcode's 1st octal digit (i.e. bits 7-6)
+    int y = (opCode & 0b00111000) >> 3; // the opcode's 2nd octal digit (i.e. bits 5-3)
+    int z = opCode & 0b00000111; // the opcode's 3rd octal digit (i.e. bits 2-0)
 
     switch(x) {
         case 0b00:
@@ -353,7 +353,7 @@ void CPU::decodeCB(byte opCode) {
                     break;
                 case 0b001: // rrc [b, c, d, e, h, l, a] | 0xCB08, 0xCB09, 0xCB0A, 0xCB0B, 0xCB0C, 0xCB0E, 0xCB0F
                     if(z != 0b110) {
-                        registers.set8Bit(z, rlc(registers.get8Bit(z)));
+                        registers.set8Bit(z, rrc(registers.get8Bit(z)));
                     } else { // rrc (hl) | 0xCB0E
                         writeByte(registers.HL, rrc(readByte(registers.HL)));
                     }
@@ -1084,7 +1084,7 @@ void CPU::doJumpOperation(int y, int z, int q, int p) {
             }
 
             incrementCycles(8);
-            registers.PC++;
+            registers.PC += 1;
 
             break;
         case 0b111: // reset | 0xC7, 0xCF, 0xD7, 0xDF, 0xE7, 0xEF, 0xF7, 0xFF
@@ -1195,7 +1195,7 @@ byte CPU::getIE() {
  * Increments a value by 1 and sets the necessary flags.
  */
 byte CPU::increment(byte value) {
-    // Flags.HALF - set if there was a carry from the 3rd bit to the 4th bit, otherwise reset.
+    // HALF - set if there was a carry from the 3rd bit to the 4th bit, otherwise reset.
     if((value & 0x0F) == 0x0F) {
         setFlags(HALF);
     } else {
@@ -1207,7 +1207,7 @@ byte CPU::increment(byte value) {
 
     resetFlags(SUB);
 
-    // Flags.ZERO - set if result is 0, otherwise reset
+    // ZERO - set if result is 0, otherwise reset
     if(value == 0) {
         setFlags(ZERO);
     } else {
@@ -1225,7 +1225,7 @@ byte CPU::decrement(byte value) {
     // decrement value by 1 and get the first 8 bits
     byte result = value - 1;
 
-    // Flags.HALF - set if there was a carry (borrow) from the 4th bit to the 3rd bit, otherwise reset.
+    // HALF - set if there was a carry (borrow) from the 4th bit to the 3rd bit, otherwise reset.
     // invert value's bits, xor with (value - 1) then find out what the 4th bit is with (& 0x10).
     // If it equals zero, then there was a carry.
     if((((~value) ^ result) & 0x10) == 0) {

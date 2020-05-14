@@ -5,7 +5,7 @@
 
 Memory::Memory() {
     cartridge = new byte[0x800000];
-    ram = new byte[0x8000];
+    ram = new byte[0xFFFF];
 }
 
 Memory::~Memory() {
@@ -53,6 +53,7 @@ void Memory::setGpuCallback(std::function<void(word, byte, byte)> callback) {
 byte Memory::readByte(word address) {
     word addr;
 
+    // TODO: copy data from cartridge to ram and just access ram
     if(address <= 0x3FFF) {
         return cartridge[address];
     } else if(address <= 0x7FFF) {

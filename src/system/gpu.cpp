@@ -175,22 +175,6 @@ void GPU::requestInterrupt(int interrupt) {
 }
 
 /*
-    The screen does render in a CRT way. The way it works at its deepest is using a pixel FIFO (a queue, if you prefer).
-    The FIFO is filled every time it's needed (once every 8 pixels, also when sprites need to be taken into account, and so on).
-
-    Each scanline is rendered in the following way:
-
-    - During Mode 2, OAM is searched to pick the 10 sprites that will be rendered on this scanline.
-    - During Mode 3, the FIFO is first filled with BG tiles, then shifted according to the lower 3 bits of SCX ("fine scrolling").
-       Then, pixels are shifted out, and once the FIFO has only 8 pixels remaining, a tile row is fetched to fill 8 more pixels.
-       The process repeats, and may be interrupted by the window, which more or less restarts the whole process but fetching WIN tiles instead.
-       The palette is applied to each pixel when it's shifted out.
-    - Mode 0 is the time left until the following Mode 2 starts - different things during Mode 3 (initial SCX shifting, sprites, and the window)
-       can cause the FIFO to stall while something else completes, so that extra time is taken from Mode 0.
-
-    Parameters are sampled at different times and in different ways: for example, BGP (and OBP0 and OBP1) are sampled each time a pixel is pushed;
-    SCY and LCDC are sampled each time a tile is fetched, SCX is sampled in a complex way.
-    
-    You can reliably change anything between scanlines and it'll work intuitively (except maybe OAM DMA), but there are also things you can
-    change mid-scanline to produce complex effects. I can provide further information if you're interested.
+    PinoBatch
+    My best guess for the DMG color values to RGB is %00=#CC4, %01=#8A4, %10=#464, %11=#044
 */
