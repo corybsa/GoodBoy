@@ -88,4 +88,4 @@ public:
     void test_0xCBFF();
 };
 
-#endif //GOODBOY_INSTRS_CB00_CB3F_H
+#endif //GOODBOY_INSTRS_CBC0_CBFF_H

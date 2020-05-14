@@ -88,4 +88,4 @@ public:
     void test_0xCBBF();
 };
 
-#endif //GOODBOY_INSTRS_CB00_CB3F_H
+#endif //GOODBOY_INSTRS_CB80_CBBF_H
