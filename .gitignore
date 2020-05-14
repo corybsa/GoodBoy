@@ -1,2 +1,4 @@
 resources/roms/games
 build
+.idea/
+compile_commands.json
