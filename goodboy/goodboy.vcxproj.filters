@@ -1,0 +1,283 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="imgui\backends\imgui_impl_dx11.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\backends\imgui_impl_win32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_draw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_tables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\cartridge.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\cpu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\gameboy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\gpu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\lcd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\memory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\registers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\timers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\system\cpu_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\system\instrs_00_3F.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\system\instrs_40_7F.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\system\instrs_80_BF.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\system\instrs_C0_FF.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\system\instrs_CB00_CB3F.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\system\instrs_CB40_CB7F.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\system\instrs_CB80_CBBF.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\system\instrs_CBC0_CBFF.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\system\instructions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\system\memory_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\system\test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\main_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="imgui\backends\imgui_impl_dx11.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\backends\imgui_impl_win32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imconfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_rectpack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_textedit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_truetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\includes\cartridge.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\includes\constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\includes\cpu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\includes\gameboy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\includes\globals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\includes\gpu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\includes\lcd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\includes\memory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\includes\registers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\includes\timers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\includes\types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test\system\includes\cpu_test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test\system\includes\instrs_00_3F.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test\system\includes\instrs_40_7F.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test\system\includes\instrs_80_BF.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test\system\includes\instrs_C0_FF.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test\system\includes\instrs_CB00_CB3F.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test\system\includes\instrs_CB40_CB7F.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test\system\includes\instrs_CB80_CBBF.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test\system\includes\instrs_CBC0_CBFF.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test\system\includes\instructions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test\system\includes\memory_test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test\system\includes\test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imfilebrowser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\gameboy-opcodes.html" />
+    <None Include="resources\GameBoyProgManVer1.1.pdf" />
+    <None Include="resources\opcode_decode.md" />
+    <None Include="resources\TCAGBD.pdf" />
+    <None Include="imgui.ini" />
+    <None Include=".gitignore" />
+    <None Include="resources\roms\tests\blargg\cpu_instrs\source\common\console.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\roms\tests\blargg\cpu_instrs\source\common\gb.inc">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="resources\roms\tests\blargg\cpu_instrs\source\common\macros.inc">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="resources\roms\tests\blargg\cpu_instrs\source\shell.inc">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="resources\roms\tests\blargg\instr_timing\source\common\console.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\roms\tests\blargg\instr_timing\source\common\gb.inc">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="resources\roms\tests\blargg\instr_timing\source\common\macros.inc">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="resources\roms\tests\blargg\instr_timing\source\shell.inc">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="resources\roms\tests\blargg\mem_timing\source\common\console.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\roms\tests\blargg\mem_timing\source\common\gb.inc">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="resources\roms\tests\blargg\mem_timing\source\common\macros.inc">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="resources\roms\tests\blargg\mem_timing\source\shell.inc">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="resources\roms\tests\blargg\mem_timing-2\source\common\console.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\roms\tests\blargg\mem_timing-2\source\common\gb.inc">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="resources\roms\tests\blargg\mem_timing-2\source\common\macros.inc">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="resources\roms\tests\blargg\mem_timing-2\source\shell.inc">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="resources\roms\tests\blargg\oam_bug\source\common\console.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\roms\tests\blargg\oam_bug\source\common\gb.inc">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="resources\roms\tests\blargg\oam_bug\source\common\macros.inc">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="resources\roms\tests\blargg\oam_bug\source\shell.inc">
+      <Filter>Header Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="resources\GBSpec.txt" />
+    <Text Include="resources\half-carry-math.txt" />
+    <Text Include="resources\links.txt" />
+    <Text Include="resources\registers.txt" />
+    <Text Include="resources\timings.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="resources\fonts\consolas.ttf" />
+    <Font Include="resources\fonts\consolasb.ttf" />
+  </ItemGroup>
+</Project>
